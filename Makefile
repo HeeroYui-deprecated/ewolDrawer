@@ -39,7 +39,7 @@ all:
 install: all
 	#$(PROJECT_SDK)/platform-tools/adb kill-server
 	# install application
-	sudo $(PROJECT_SDK)/platform-tools/adb  install -r ./bin/EwolActivity-debug.apk
+	sudo $(PROJECT_SDK)/platform-tools/adb  install -r ./bin/$(PROJECT_NAME)-debug.apk
 
 clean:
 	rm -rf bin libs gen obj

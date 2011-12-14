@@ -16,8 +16,9 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := ewolabstraction
-LOCAL_SRC_FILES := Main.cpp
+LOCAL_MODULE    := ewoldrawerpackage
+LOCAL_SRC_FILES := ewolAndroidAbstraction.cpp \
+                   Main.cpp
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM
 LOCAL_STATIC_LIBRARIES := ewol
 LOCAL_STATIC_JAVA_LIBRARIES := ewol

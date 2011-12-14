@@ -10,11 +10,11 @@ EWOL_FOLDER=$(PROJECT_MODULE)ewol
 #PROJECT_NAME=ewoldrawer
 PROJECT_VENDOR=example
 PROJECT_NAME=EwolActivity
+PROJECT_PACKAGE=ewoldrawerpackage
 JAVA_FOLDER=src/com/$(PROJECT_VENDOR)/$(PROJECT_NAME)
 
 
 all:
-	cd $(PROJECT_NDK) ; NDK_PROJECT_PATH=$(PROJECT_PATH) NDK_MODULE_PATH=$(PROJECT_MODULE) ./ndk-build
 	# Clear previous sources
 	rm -rf src
 	# Create folder
@@ -24,10 +24,19 @@ all:
 	
 	sed -i "s|__PROJECT_VENDOR__|$(PROJECT_VENDOR)|" $(JAVA_FOLDER)/$(PROJECT_NAME).java
 	sed -i "s|__PROJECT_NAME__|$(PROJECT_NAME)|" $(JAVA_FOLDER)/$(PROJECT_NAME).java
+	sed -i "s|__PROJECT_PACKAGE__|$(PROJECT_PACKAGE)|" $(JAVA_FOLDER)/$(PROJECT_NAME).java
 	
+	cp $(EWOL_FOLDER)/SourcesJava/ewolAndroidAbstraction.cpp jni/
+	sed -i "s|__PROJECT_VENDOR__|$(PROJECT_VENDOR)|" jni/ewolAndroidAbstraction.cpp
+	sed -i "s|__PROJECT_NAME__|$(PROJECT_NAME)|" jni/ewolAndroidAbstraction.cpp
+	sed -i "s|__PROJECT_PACKAGE__|$(PROJECT_PACKAGE)|" jni/ewolAndroidAbstraction.cpp
+	
+	#build native code
+	cd $(PROJECT_NDK) ; NDK_PROJECT_PATH=$(PROJECT_PATH) NDK_MODULE_PATH=$(PROJECT_MODULE) ./ndk-build
+	#build java CODE : 
 	PATH=$(PROJECT_SDK)/tools/:$(PROJECT_SDK)/platform-tools/:$(PATH) ant -Dsdk.dir=$(PROJECT_SDK) debug
 	rm -rf src
-	
+	rm -f  jni/ewolAndroidAbstraction.cpp
 
 install: all
 	#$(PROJECT_SDK)/platform-tools/adb kill-server

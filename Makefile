@@ -1,45 +1,50 @@
 
+###############################################################################
+### Some Preject properties :                                               ###
+###############################################################################
+
 PROJECT_PATH=$(shell pwd)
-PROJECT_NDK=$(PROJECT_PATH)/../android/ndk-r7/
-PROJECT_SDK=$(PROJECT_PATH)/../android/sdk-r15/
-PROJECT_MODULE=$(PROJECT_PATH)/../
+PROJECT_NDK?=$(PROJECT_PATH)/../android/ndk-r7/
+PROJECT_SDK?=$(PROJECT_PATH)/../android/sdk-r15/
+PROJECT_MODULE?=$(PROJECT_PATH)/../
 EWOL_FOLDER=$(PROJECT_MODULE)ewol
 
-
+# group name or constructor ... (no dot, no MAJ no Numerical char)
 PROJECT_VENDOR=heeroyui
+# Binary name ... (no dot, no MAJ no Numerical char)
 PROJECT_NAME=ewoldrawer
-PROJECT_PACKAGE=ewoldrawerpackage
-JAVA_FOLDER=src/com/$(PROJECT_VENDOR)/$(PROJECT_NAME)
 
 
-all:
-	# Clear previous sources
-	rm -rf src
-	# Create folder
-	mkdir -p $(JAVA_FOLDER)/
-	# copy the java File : 
-	cp $(EWOL_FOLDER)/SourcesJava/PROJECT_NAME.java $(JAVA_FOLDER)/$(PROJECT_NAME).java
-	
-	sed -i "s|__PROJECT_VENDOR__|$(PROJECT_VENDOR)|" $(JAVA_FOLDER)/$(PROJECT_NAME).java
-	sed -i "s|__PROJECT_NAME__|$(PROJECT_NAME)|" $(JAVA_FOLDER)/$(PROJECT_NAME).java
-	sed -i "s|__PROJECT_PACKAGE__|$(PROJECT_PACKAGE)|" $(JAVA_FOLDER)/$(PROJECT_NAME).java
-	
-	cp $(EWOL_FOLDER)/SourcesJava/ewolAndroidAbstraction.cpp jni/
-	sed -i "s|__PROJECT_VENDOR__|$(PROJECT_VENDOR)|" jni/ewolAndroidAbstraction.cpp
-	sed -i "s|__PROJECT_NAME__|$(PROJECT_NAME)|" jni/ewolAndroidAbstraction.cpp
-	sed -i "s|__PROJECT_PACKAGE__|$(PROJECT_PACKAGE)|" jni/ewolAndroidAbstraction.cpp
-	
-	#build native code
-	cd $(PROJECT_NDK) ; NDK_PROJECT_PATH=$(PROJECT_PATH) NDK_MODULE_PATH=$(PROJECT_MODULE) ./ndk-build
-	#build java CODE : 
-	PATH=$(PROJECT_SDK)/tools/:$(PROJECT_SDK)/platform-tools/:$(PATH) ant -Dsdk.dir=$(PROJECT_SDK) debug
-	rm -rf src
-	rm -f  jni/ewolAndroidAbstraction.cpp
+# get the tag of the current project : 
+PROJECT_VERSION_TAG=$(shell git describe --tags)
+#$(info Project version TAG : $(PROJECT_VERSION_TAG))
 
-install: all
-	#$(PROJECT_SDK)/platform-tools/adb kill-server
-	# install application
-	sudo $(PROJECT_SDK)/platform-tools/adb  install -r ./bin/$(PROJECT_NAME)-debug.apk
+PROJECT_VERSION_TAG_SHORT=$(shell git describe --tags --abbrev=0)
+#$(info Project version TAG Short: $(PROJECT_VERSION_TAG_SHORT))
 
-clean:
-	rm -rf bin libs gen obj
+# enable or disable debug :
+DEBUG:=1
+
+###############################################################################
+### Compilation Define                                                      ###
+###############################################################################
+ifeq ("$(DEBUG)", "0")
+    PROJECT_CXXFLAGS = -DPROJECT_DEBUG_LEVEL=1
+    PROJECT_CXXFLAGS+= -DPROJECT_NDEBUG
+    PROJECT_CXXFLAGS+= -DPROJECT_VERSION_TAG_NAME="\"$(VERSION_TAG)-release\""
+else
+    PROJECT_CXXFLAGS = -DPROJECT_DEBUG_LEVEL=3
+    PROJECT_CXXFLAGS+= -DPROJECT_VERSION_TAG_NAME="\"$(VERSION_TAG)-debug\""
+endif
+DEFINE+= -DPROJECT_VERSION_BUILD_TIME="\"$(VERSION_BUILD_TIME)\""
+
+PROJECT_LDFLAGS=
+
+PROJECT_SOURCES= jni/ewolAndroidAbstraction.cpp \
+                 jni/Main.cpp
+
+
+#include the specific platefom makefile
+include $(EWOL_FOLDER)/Build/Makefile.$(PLATFORM).mk
+
+

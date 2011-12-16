@@ -100,10 +100,34 @@ void APP_Init(int argc, char *argv[])
 		//fontID = GetFontIdWithFileName("dataTest/TextMonospace.ebt");
 	}
 	*/
+	
+	// set the default Path of the application : 
+	#ifdef PLATFORM_Linux
+		etk::String homedir;
+		#ifdef NDEBUG
+			homedir = "/usr/share/"PROJECT_NAME"/";
+		#else
+			char cCurrentPath[FILENAME_MAX];
+			if (!getcwd(cCurrentPath, FILENAME_MAX)) {
+				homedir = "./assets/";
+			} else {
+				cCurrentPath[FILENAME_MAX - 1] = '\0';
+				homedir = cCurrentPath;
+				homedir += "/assets/";
+			}
+		#endif
+		SetBaseFolderData(homedir.c_str());
+		SetBaseFolderDataUser("~/."PROJECT_NAME"/");
+		SetBaseFolderCache("/tmp/"PROJECT_NAME"/");
+	#endif
+	
 	ewol::SetFontFolder("Font");
-	//ewol::SetDefaultFont("freefont/FreeMono", 14);
-	//ewol::SetDefaultFont("ebtfont/Monospace", 14);
-	ewol::SetDefaultFont("ebtfont/Monospace", 33);
+	#ifdef EWOL_USE_FREE_TYPE
+		ewol::SetDefaultFont("freefont/FreeMono", 14);
+	#else
+		//ewol::SetDefaultFont("ebtfont/Monospace", 14);
+		ewol::SetDefaultFont("ebtfont/Monospace", 33);
+	#endif
 	//ewol::theme::LoadDefault("dataTest/exemple.eol");
 	/*
 	etk::File fileTmp("exemple.eol", etk::FILE_TYPE_DATA);

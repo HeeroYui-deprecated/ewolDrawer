@@ -19,7 +19,5 @@ NDK_MODULE_PATH := $(LOCAL_PATH)/../../
 
 
 
-
-
 #########################################################  ==> Remove the /jni ....
 $(call import-module,ewol/Sources)

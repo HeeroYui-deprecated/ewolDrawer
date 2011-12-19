@@ -4,8 +4,14 @@
 ###############################################################################
 
 PROJECT_PATH=$(shell pwd)
+ifeq ($(PLATFORM), Linux)
+#PROJECT_NDK?=$(PROJECT_PATH)/../ewol/
+PROJECT_NDK?=$(PROJECT_PATH)/../android/ldk/
+else ifeq ($(PLATFORM), Android)
 PROJECT_NDK?=$(PROJECT_PATH)/../android/ndk-r7/
 PROJECT_SDK?=$(PROJECT_PATH)/../android/sdk-r15/
+endif
+
 
 PROJECT_MODULE?=$(PROJECT_PATH)/../
 

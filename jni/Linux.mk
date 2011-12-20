@@ -5,19 +5,20 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := ewoldrawerpackage
 LOCAL_STATIC_LIBRARIES := ewol
 
-LOCAL_SRC_FILES := ewolAndroidAbstraction.cpp \
-                   Main.cpp
-LOCAL_LDLIBS    := -llog -landroid
 
-#LOCAL_STATIC_JAVA_LIBRARIES := ewol
-#LOCAL_JAVA_RESOURCE_DIRS := $(LOCAL_PATH)/../ewol
+# load the common sources file of the platform
+include $(LOCAL_PATH)/file.mk
 
-include $(BUILD_SHARED_LIBRARY)
+LOCAL_SRC_FILES := $(FILE_LIST)
+LOCAL_LDLIBS    := 
+
+$(info ====> MAIN FILE : include Executable ...)
+include $(BUILD_EXECUTABLE)
 
 NDK_MODULE_PATH := $(LOCAL_PATH)/../../
 
+$(info ====> Module Path:$(NDK_MODULE_PATH) ... ==> import sub modules ...)
 
 
 
-#########################################################  ==> Remove the /jni ....
 $(call import-module,ewol/Sources)

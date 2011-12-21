@@ -57,6 +57,7 @@ class Plop :public ewol::Windows
 			myButton = new ewol::Button("BT 3");
 			myButton->SetExpendX(true);
 			//myButton->SetExpendY(true);
+			myButton->SetFillX(true);
 			mySizerVert->SubWidgetAdd(myButton);
 			
 			ewol::Test * myTest = new ewol::Test();
@@ -73,11 +74,14 @@ class Plop :public ewol::Windows
 			myTest->SetExpendY(true);
 			mySizerVert->SubWidgetAdd(myTest);
 			myButton = new ewol::Button("4 4 BT");
+			myButton->SetFillX(true);
+			myButton->SetFillY(true);
 			myButton->SetExpendY(true);
 			mySizerVert->SubWidgetAdd(myButton);
 			
 			myButton = new ewol::Button("Exemple 2");
 			myButton->SetExpendX(true);
+			myButton->SetFillY(true);
 			mySizer->SubWidgetAdd(myButton);
 		};
 		

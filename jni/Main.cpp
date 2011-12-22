@@ -31,6 +31,7 @@
 #include <ewol/widget/SizerHori.h>
 #include <ewol/widget/SizerVert.h>
 #include <ewol/widget/Test.h>
+#include <ewol/widget/Label.h>
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -48,10 +49,17 @@ class Plop :public ewol::Windows
 			ewol::SizerHori * mySizer = new ewol::SizerHori();
 			SetSubWidget(mySizer);
 			
-			ewol::Button * myButton = new ewol::Button("LB");
-			mySizer->SubWidgetAdd(myButton);
-			
 			ewol::SizerVert * mySizerVert = new ewol::SizerVert();
+			mySizer->SubWidgetAdd(mySizerVert);
+			
+			ewol::Button * myButton = new ewol::Button("LB");
+			mySizerVert->SubWidgetAdd(myButton);
+			ewol::Label * myLabel = new ewol::Label("Mon Mabel");
+			myLabel->SetExpendY(true);
+			myLabel->SetFillY(true);
+			mySizerVert->SubWidgetAdd(myLabel);
+			
+			mySizerVert = new ewol::SizerVert();
 			mySizer->SubWidgetAdd(mySizerVert);
 			
 			myButton = new ewol::Button("BT 3");
@@ -130,7 +138,7 @@ void APP_Init(int argc, char *argv[])
 		ewol::SetDefaultFont("freefont/FreeMono", 14);
 	#else
 		//ewol::SetDefaultFont("ebtfont/Monospace", 14);
-		ewol::SetDefaultFont("ebtfont/Monospace", 33);
+		ewol::SetDefaultFont("ebtfont/Monospace", 22);
 	#endif
 	//ewol::theme::LoadDefault("dataTest/exemple.eol");
 	/*

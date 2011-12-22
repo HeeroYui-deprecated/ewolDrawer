@@ -32,6 +32,7 @@
 #include <ewol/widget/SizerVert.h>
 #include <ewol/widget/Test.h>
 #include <ewol/widget/Label.h>
+#include <ewol/widget/Entry.h>
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -54,6 +55,14 @@ class Plop :public ewol::Windows
 			
 			ewol::Button * myButton = new ewol::Button("LB");
 			mySizerVert->SubWidgetAdd(myButton);
+			
+			ewol::Entry * myEntry = new ewol::Entry("basic Text");
+			myEntry->SetExpendY(true);
+			myEntry->SetFillY(true);
+			myEntry->SetExpendX(true);
+			myEntry->SetFillX(true);
+			mySizerVert->SubWidgetAdd(myEntry);
+			
 			ewol::Label * myLabel = new ewol::Label("Mon Mabel");
 			myLabel->SetExpendY(true);
 			myLabel->SetFillY(true);

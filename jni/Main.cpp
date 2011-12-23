@@ -57,19 +57,25 @@ class Plop :public ewol::Windows
 			mySizerVert->SubWidgetAdd(myButton);
 			
 			ewol::Entry * myEntry = new ewol::Entry("basic Text");
-			myEntry->SetExpendY(true);
-			myEntry->SetFillY(true);
-			myEntry->SetExpendX(true);
-			myEntry->SetFillX(true);
+			myEntry->SetWidth(120);
 			mySizerVert->SubWidgetAdd(myEntry);
 			
-			ewol::Label * myLabel = new ewol::Label("Mon Mabel");
+			ewol::Label * myLabel = new ewol::Label("Mon label");
 			myLabel->SetExpendY(true);
 			myLabel->SetFillY(true);
 			mySizerVert->SubWidgetAdd(myLabel);
 			
 			mySizerVert = new ewol::SizerVert();
 			mySizer->SubWidgetAdd(mySizerVert);
+			
+			myEntry = new ewol::Entry("Mega super plop");
+			//myEntry->SetExpendY(true);
+			//myEntry->SetFillY(true);
+			//myEntry->SetExpendX(true);
+			myEntry->SetFillX(true);
+			myEntry->SetWidth(120);
+			mySizerVert->SubWidgetAdd(myEntry);
+			
 			
 			myButton = new ewol::Button("BT 3");
 			myButton->SetExpendX(true);
@@ -87,9 +93,6 @@ class Plop :public ewol::Windows
 			myCheckBox = new ewol::CheckBox("Exemple 3 et יא$");
 			mySizerVert->SubWidgetAdd(myCheckBox);
 			
-			myTest = new ewol::Test();
-			myTest->SetExpendY(true);
-			mySizerVert->SubWidgetAdd(myTest);
 			myButton = new ewol::Button("4 4 BT");
 			myButton->SetFillX(true);
 			myButton->SetFillY(true);

@@ -33,6 +33,9 @@
 #include <ewol/widget/Test.h>
 #include <ewol/widget/Label.h>
 #include <ewol/widget/Entry.h>
+#include <ewol/widget/List.h>
+
+#include <Debug.h>
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -40,6 +43,76 @@
 #include <string.h>
 
 // need to run xcompmgr to have transparency
+
+
+class MaListExemple : public ewol::List
+{
+	public:
+		MaListExemple(void) { };
+		~MaListExemple(void) { };
+		virtual color_ts GetBasicBG(void) {
+			color_ts bg;
+			bg.red = 1.0;
+			bg.green = 0.0;
+			bg.blue = 0.0;
+			bg.alpha = 1.0;
+			return bg;
+		}
+		
+		uint32_t GetNuberOfColomn(void) {
+			return 1;
+		};
+		bool GetTitle(int32_t colomn, etk::String &myTitle, color_ts &fg, color_ts &bg) {
+			myTitle = "title";
+			return true;
+		};
+		uint32_t GetNuberOfRaw(void) {
+			return 3;
+		};
+		bool GetElement(int32_t colomn, int32_t raw, etk::String &myTextToWrite, color_ts &fg, color_ts &bg) {
+			switch (raw) {
+				case 0:
+					myTextToWrite = "Ligne 1";
+					break;
+				case 1:
+					myTextToWrite = "ma ligne 2";
+					break;
+				case 2:
+					myTextToWrite = "ma ligne 3";
+					break;
+				default:
+					myTextToWrite = "ERROR";
+					break;
+			}
+			fg.red = 0.0;
+			fg.green = 0.0;
+			fg.blue = 0.0;
+			fg.alpha = 1.0;
+			if (raw % 2) {
+				bg.red = 1.0;
+				bg.green = 1.0;
+				bg.blue = 1.0;
+				bg.alpha = 1.0;
+			} else {
+				bg.red = 0.5;
+				bg.green = 0.5;
+				bg.blue = 0.5;
+				bg.alpha = 1.0;
+			}
+			return true;
+		};
+		
+		bool OnItemEvent(int32_t IdInput, ewol::eventInputType_te typeEvent, int32_t colomn, int32_t raw, etkFloat_t x, etkFloat_t y) {
+			if (typeEvent == ewol::EVENT_INPUT_TYPE_SINGLE) {
+				DRAW_INFO("Event on List : IdInput=" << IdInput << " colomn=" << colomn << " raw=" << raw );
+			}
+			return false;
+		}
+	
+};
+
+
+
 
 class Plop :public ewol::Windows
 {
@@ -49,6 +122,13 @@ class Plop :public ewol::Windows
 			// generate the display : 
 			ewol::SizerHori * mySizer = new ewol::SizerHori();
 			SetSubWidget(mySizer);
+			
+			
+			MaListExemple * myList = new MaListExemple();
+			//myList->SetExpendX(true);
+			myList->SetExpendY(true);
+			myList->SetFillY(true);
+			mySizer->SubWidgetAdd(myList);
 			
 			ewol::SizerVert * mySizerVert = new ewol::SizerVert();
 			mySizer->SubWidgetAdd(mySizerVert);
@@ -99,10 +179,6 @@ class Plop :public ewol::Windows
 			myButton->SetExpendY(true);
 			mySizerVert->SubWidgetAdd(myButton);
 			
-			myButton = new ewol::Button("Exemple 2");
-			myButton->SetExpendX(true);
-			myButton->SetFillY(true);
-			mySizer->SubWidgetAdd(myButton);
 		};
 		
 		~Plop(void)

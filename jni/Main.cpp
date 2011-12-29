@@ -34,6 +34,9 @@
 #include <ewol/widget/Label.h>
 #include <ewol/widget/Entry.h>
 #include <ewol/widget/List.h>
+#include <ewol/widget/PopUp.h>
+#include <ewol/widget/Spacer.h>
+#include <ewol/widgetMeta/FileChooser.h>
 
 #include <Debug.h>
 
@@ -114,6 +117,12 @@ class MaListExemple : public ewol::List
 
 
 
+
+
+const char * const drawerEventRequestOpenFile       = "Drawer Request Open File";
+const char * const drawerEventRequestOpenFileClosed = "Drawer Close Open File";
+
+
 class Plop :public ewol::Windows
 {
 	public:
@@ -157,10 +166,13 @@ class Plop :public ewol::Windows
 			mySizerVert->SubWidgetAdd(myEntry);
 			
 			
-			myButton = new ewol::Button("BT 3");
+			myButton = new ewol::Button("Test Pop-up");
 			myButton->SetExpendX(true);
 			//myButton->SetExpendY(true);
 			myButton->SetFillX(true);
+			if (false == myButton->ExternLinkOnEvent("ewol Button Pressed", GetWidgetId(), drawerEventRequestOpenFile) ) {
+				DRAW_CRITICAL("link with an entry event");
+			}
 			mySizerVert->SubWidgetAdd(myButton);
 			
 			ewol::Test * myTest = new ewol::Test();
@@ -184,6 +196,25 @@ class Plop :public ewol::Windows
 		~Plop(void)
 		{
 			
+		};
+		
+		
+		bool OnEventAreaExternal(int32_t widgetID, const char * generateEventId, const char * eventExternId, etkFloat_t x, etkFloat_t y)
+		{
+			DRAW_INFO("Receive Event from the BT ... : widgetid=" << widgetID << "\"" << generateEventId << "\" ==> internalEvent=\"" << eventExternId << "\"" );
+			if (eventExternId == drawerEventRequestOpenFile) {
+				ewol::FileChooser* tmpWidget = new ewol::FileChooser();
+				tmpWidget->SetTitle("Open Files ...");
+				tmpWidget->SetValidateLabel("Open");
+				tmpWidget->SetFolder("/home/");
+				PopUpWidgetPush(tmpWidget);
+				if (false == tmpWidget->ExternLinkOnEvent("ewol event file chooser cancel", GetWidgetId(), drawerEventRequestOpenFileClosed) ) {
+					DRAW_CRITICAL("link with an entry event");
+				}
+			} else if (eventExternId == drawerEventRequestOpenFileClosed) {
+				PopUpWidgetPop();
+			}
+			return true;
 		};
 };
 

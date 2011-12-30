@@ -81,7 +81,7 @@ class MaListExemple : public ewol::List
 					myTextToWrite = "ma ligne 2";
 					break;
 				case 2:
-					myTextToWrite = "ma ligne 3";
+					myTextToWrite = "test de clipping du text et plus si afinitee";
 					break;
 				default:
 					myTextToWrite = "ERROR";

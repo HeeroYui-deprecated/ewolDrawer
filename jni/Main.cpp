@@ -37,6 +37,7 @@
 #include <ewol/widget/PopUp.h>
 #include <ewol/widget/Spacer.h>
 #include <ewol/widgetMeta/FileChooser.h>
+#include <ewol/WidgetManager.h>
 
 #include <Debug.h>
 
@@ -119,8 +120,9 @@ class MaListExemple : public ewol::List
 
 
 
-const char * const drawerEventRequestOpenFile       = "Drawer Request Open File";
-const char * const drawerEventRequestOpenFileClosed = "Drawer Close Open File";
+const char * const drawerEventRequestOpenFile         = "Drawer Request Open File";
+const char * const drawerEventRequestOpenFileClosed   = "Drawer Close Open File";
+const char * const drawerEventRequestOpenFileSelected = "Drawer Open Selected File";
 
 
 class Plop :public ewol::Windows
@@ -206,12 +208,27 @@ class Plop :public ewol::Windows
 				ewol::FileChooser* tmpWidget = new ewol::FileChooser();
 				tmpWidget->SetTitle("Open Files ...");
 				tmpWidget->SetValidateLabel("Open");
-				tmpWidget->SetFolder("/home/");
+				tmpWidget->SetFolder("/");
 				PopUpWidgetPush(tmpWidget);
 				if (false == tmpWidget->ExternLinkOnEvent("ewol event file chooser cancel", GetWidgetId(), drawerEventRequestOpenFileClosed) ) {
 					DRAW_CRITICAL("link with an entry event");
 				}
+				if (false == tmpWidget->ExternLinkOnEvent("ewol event file chooser validate", GetWidgetId(), drawerEventRequestOpenFileSelected) ) {
+					DRAW_CRITICAL("link with an entry event");
+				}
 			} else if (eventExternId == drawerEventRequestOpenFileClosed) {
+				PopUpWidgetPop();
+			} else if (eventExternId == drawerEventRequestOpenFileSelected) {
+				// get widget:
+				ewol::FileChooser * tmpWidget = (ewol::FileChooser*)ewol::widgetManager::Get(widgetID);
+				if (NULL == tmpWidget) {
+					DRAW_ERROR("impossible to get pop_upWidget " << widgetID);
+					PopUpWidgetPop();
+					return false;
+				}
+				// get the filename : 
+				etk::String tmpData = tmpWidget->GetCompleateFileName();
+				DRAW_DEBUG("Request opening the file : " << tmpData);
 				PopUpWidgetPop();
 			}
 			return true;

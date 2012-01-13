@@ -125,7 +125,7 @@ const char * const drawerEventRequestOpenFileClosed   = "Drawer Close Open File"
 const char * const drawerEventRequestOpenFileSelected = "Drawer Open Selected File";
 
 
-class Plop :public ewol::Windows
+class Plop : public ewol::Windows
 {
 	public:
 		Plop(void)

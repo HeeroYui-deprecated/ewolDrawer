@@ -23,7 +23,7 @@
  */
 
 #ifndef __EWOL_DRAWER_DEBUG_H__
-#define __EWOL_DRAWER_EBUG_H__
+#define __EWOL_DRAWER_DEBUG_H__
 
 #include <etk/Types.h>
 #include <etk/Debug.h>

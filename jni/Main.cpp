@@ -30,7 +30,6 @@
 #include <ewol/widget/CheckBox.h>
 #include <ewol/widget/SizerHori.h>
 #include <ewol/widget/SizerVert.h>
-#include <ewol/widget/Test.h>
 #include <ewol/widget/Label.h>
 #include <ewol/widget/Entry.h>
 #include <ewol/widget/List.h>
@@ -66,14 +65,14 @@ class MaListExemple : public ewol::List
 		uint32_t GetNuberOfColomn(void) {
 			return 1;
 		};
-		bool GetTitle(int32_t colomn, etk::String &myTitle, color_ts &fg, color_ts &bg) {
+		bool GetTitle(int32_t colomn, etk::UString &myTitle, color_ts &fg, color_ts &bg) {
 			myTitle = "title";
 			return true;
 		};
 		uint32_t GetNuberOfRaw(void) {
 			return 3;
 		};
-		bool GetElement(int32_t colomn, int32_t raw, etk::String &myTextToWrite, color_ts &fg, color_ts &bg) {
+		bool GetElement(int32_t colomn, int32_t raw, etk::UString &myTextToWrite, color_ts &fg, color_ts &bg) {
 			switch (raw) {
 				case 0:
 					myTextToWrite = "Ligne 1";
@@ -172,13 +171,8 @@ class Plop : public ewol::Windows
 			myButton->SetExpendX(true);
 			//myButton->SetExpendY(true);
 			myButton->SetFillX(true);
-			if (false == myButton->ExternLinkOnEvent("ewol Button Pressed", GetWidgetId(), drawerEventRequestOpenFile) ) {
-				DRAW_CRITICAL("link with an entry event");
-			}
+			myButton->RegisterOnEvent(this, ewolEventButtonPressed, drawerEventRequestOpenFile);
 			mySizerVert->SubWidgetAdd(myButton);
-			
-			ewol::Test * myTest = new ewol::Test();
-			mySizerVert->SubWidgetAdd(myTest);
 			
 			ewol::CheckBox * myCheckBox = new ewol::CheckBox("mon label d'eK");
 			mySizerVert->SubWidgetAdd(myCheckBox);
@@ -201,37 +195,35 @@ class Plop : public ewol::Windows
 		};
 		
 		
-		bool OnEventAreaExternal(int32_t widgetID, const char * generateEventId, const char * eventExternId, etkFloat_t x, etkFloat_t y)
+		/**
+		 * @brief Receive a message from an other EObject with a specific eventId and data
+		 * @param[in] CallerObject Pointer on the EObject that information came from
+		 * @param[in] eventId Message registered by this class
+		 * @param[in] data Data registered by this class
+		 * @return ---
+		 */
+		virtual void OnReceiveMessage(ewol::EObject * CallerObject, const char * eventId, etk::UString data)
 		{
-			DRAW_INFO("Receive Event from the main windows ... : widgetid=" << widgetID << "\"" << generateEventId << "\" ==> internalEvent=\"" << eventExternId << "\"" );
-			if (eventExternId == drawerEventRequestOpenFile) {
+			DRAW_INFO("Receive Event from the main windows ... : widgetid=" << CallerObject << " ==> " << eventId << " ==> data=\"" << data << "\"" );
+			if (eventId == drawerEventRequestOpenFile) {
 				ewol::FileChooser* tmpWidget = new ewol::FileChooser();
 				tmpWidget->SetTitle("Open Files ...");
 				tmpWidget->SetValidateLabel("Open");
 				tmpWidget->SetFolder("/");
 				PopUpWidgetPush(tmpWidget);
-				if (false == tmpWidget->ExternLinkOnEvent("ewol event file chooser cancel", GetWidgetId(), drawerEventRequestOpenFileClosed) ) {
-					DRAW_CRITICAL("link with an entry event");
-				}
-				if (false == tmpWidget->ExternLinkOnEvent("ewol event file chooser validate", GetWidgetId(), drawerEventRequestOpenFileSelected) ) {
-					DRAW_CRITICAL("link with an entry event");
-				}
-			} else if (eventExternId == drawerEventRequestOpenFileClosed) {
-				PopUpWidgetPop();
-			} else if (eventExternId == drawerEventRequestOpenFileSelected) {
+				tmpWidget->RegisterOnEvent(this, ewolEventFileChooserValidate, drawerEventRequestOpenFileSelected);
+			} else if (eventId == drawerEventRequestOpenFileSelected) {
 				// get widget:
-				ewol::FileChooser * tmpWidget = (ewol::FileChooser*)ewol::widgetManager::Get(widgetID);
+				ewol::FileChooser * tmpWidget = static_cast<ewol::FileChooser*>(CallerObject);
 				if (NULL == tmpWidget) {
-					DRAW_ERROR("impossible to get pop_upWidget " << widgetID);
-					PopUpWidgetPop();
-					return false;
+					DRAW_ERROR("impossible to get pop_upWidget " << CallerObject);
+					return;
 				}
 				// get the filename : 
-				etk::String tmpData = tmpWidget->GetCompleateFileName();
+				etk::UString tmpData = tmpWidget->GetCompleateFileName();
 				DRAW_DEBUG("Request opening the file : " << tmpData);
-				PopUpWidgetPop();
 			}
-			return true;
+			return;
 		};
 };
 
@@ -240,7 +232,7 @@ static Plop * myWindowsExample = NULL;
 /**
  * @brief main application function Initialisation
  */
-void APP_Init(int argc, char *argv[])
+void APP_Init(void)
 {
 	ewol::ChangeSize(800, 600);
 	/*
@@ -269,53 +261,14 @@ void APP_Init(int argc, char *argv[])
 		SetBaseFolderCache("/tmp/"PROJECT_NAME"/");
 	#endif
 	
-	ewol::SetFontFolder("Font");
-	#ifdef EWOL_USE_FREE_TYPE
-		ewol::SetDefaultFont("freefont/FreeMono", 14);
-	#else
-		//ewol::SetDefaultFont("ebtfont/Monospace", 14);
-		ewol::SetDefaultFont("ebtfont/Monospace", 22);
-	#endif
-	//ewol::theme::LoadDefault("dataTest/exemple.eol");
-	/*
-	etk::File fileTmp("exemple.eol", etk::FILE_TYPE_DATA);
-	ewol::theme::LoadDefault(fileTmp);
-	*/
-	/*
-	etk::File tmpFile("/data/data/com.example.EwolActivity.app/assets/theme/exemple.eol");
-	if (tmpFile.Exist() ) {
-		EWOL_WARNING("file existed : " << tmpFile);
-	}
-	tmpFile = ("/data/data/com.example.EwolActivity/assets/theme/exemple.eol");
-	if (tmpFile.Exist() ) {
-		EWOL_WARNING("file existed : " << tmpFile);
-	}
-	tmpFile=("/data/com.example.EwolActivity.app/assets/theme/exemple.eol");
-	if (tmpFile.Exist() ) {
-		EWOL_WARNING("file existed : " << tmpFile);
-	}
-	tmpFile=("/data/com.example.EwolActivity/assets/theme/exemple.eol");
-	if (tmpFile.Exist() ) {
-		EWOL_WARNING("file existed : " << tmpFile);
-	}
-	tmpFile=("/data/data/com.example.ewolactivity.app/assets/theme/exemple.eol");
-	if (tmpFile.Exist() ) {
-		EWOL_WARNING("file existed : " << tmpFile);
-	}
-	tmpFile=("/data/data/com.example.ewolactivity/assets/theme/exemple.eol");
-	if (tmpFile.Exist() ) {
-		EWOL_WARNING("file existed : " << tmpFile);
-	}
-	tmpFile=("/data/com.example.ewolactivity.app/assets/theme/exemple.eol");
-	if (tmpFile.Exist() ) {
-		EWOL_WARNING("file existed : " << tmpFile);
-	}
-	tmpFile=("/data/com.example.ewolactivity/assets/theme/exemple.eol");
-	if (tmpFile.Exist() ) {
-		EWOL_WARNING("file existed : " << tmpFile);
-	}
-	*/
 	
+	ewol::SetFontFolder("Font");
+	
+	#ifdef __PLATFORM__Android
+		ewol::SetDefaultFont("freefont/FreeSerif.ttf", 16);
+	#else
+		ewol::SetDefaultFont("freefont/FreeSerif.ttf", 12);
+	#endif
 	
 	myWindowsExample = new Plop();
 	

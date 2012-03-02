@@ -35,8 +35,10 @@
 #include <ewol/widget/List.h>
 #include <ewol/widget/PopUp.h>
 #include <ewol/widget/Spacer.h>
+#include <ewol/widget/Menu.h>
 #include <ewol/widgetMeta/FileChooser.h>
 #include <ewol/WidgetManager.h>
+#include <globalMsg.h>
 
 #include <Debug.h>
 
@@ -53,6 +55,7 @@ class MaListExemple : public ewol::List
 	public:
 		MaListExemple(void) { };
 		~MaListExemple(void) { };
+		/*
 		virtual color_ts GetBasicBG(void) {
 			color_ts bg;
 			bg.red = 1.0;
@@ -61,7 +64,7 @@ class MaListExemple : public ewol::List
 			bg.alpha = 1.0;
 			return bg;
 		}
-		
+		*/
 		uint32_t GetNuberOfColomn(void) {
 			return 1;
 		};
@@ -124,14 +127,40 @@ const char * const drawerEventRequestOpenFileClosed   = "Drawer Close Open File"
 const char * const drawerEventRequestOpenFileSelected = "Drawer Open Selected File";
 
 
-class Plop : public ewol::Windows
+class MainWindows :public ewol::Windows
 {
 	public:
-		Plop(void)
+		MainWindows(void)
 		{
+			ewol::SizerVert * mySizerVert = new ewol::SizerVert();
+			SetSubWidget(mySizerVert);
+				ewol::Menu * myMenu = new ewol::Menu();
+				mySizerVert->SubWidgetAdd(myMenu);
+				int32_t idMenuFile = myMenu->AddTitle("File");
+					(void)myMenu->Add(idMenuFile, "New", "", drawMsgGuiNew);
+					(void)myMenu->AddSpacer();
+					(void)myMenu->Add(idMenuFile, "Open", "", drawMsgGuiOpen);
+					(void)myMenu->Add(idMenuFile, "Close", "", drawMsgGuiClose);
+					(void)myMenu->Add(idMenuFile, "Save", "", drawMsgGuiSave);
+					(void)myMenu->Add(idMenuFile, "Save As ...", "", drawMsgGuiSaveAs);
+					(void)myMenu->AddSpacer();
+				int32_t idMenuEdit = myMenu->AddTitle("Edit");
+					(void)myMenu->Add(idMenuEdit, "Undo", "", drawMsgGuiUndo);
+					(void)myMenu->Add(idMenuEdit, "Redo", "", drawMsgGuiRedo);
+				int32_t idMenuElement = myMenu->AddTitle("Element");
+					(void)myMenu->Add(idMenuElement, "Element new", "", drawMsgGuiElementNew);
+					(void)myMenu->Add(idMenuElement, "Element Remove", "", drawMsgGuiElementRemove);
+					(void)myMenu->Add(idMenuElement, "Element hide/show", "", drawMsgGuiElementHideShow);
+					(void)myMenu->AddSpacer();
+					(void)myMenu->Add(idMenuElement, "Dot Add", "", drawMsgGuiDotAdd);
+					(void)myMenu->Add(idMenuElement, "Dot Rm", "", drawMsgGuiDotRm);
+					(void)myMenu->AddSpacer();
+					(void)myMenu->Add(idMenuElement, "Link Start", "", drawMsgGuiLinkStart);
+					(void)myMenu->Add(idMenuElement, "Link Stop", "", drawMsgGuiLinkStop);
+				
 			// generate the display : 
 			ewol::SizerHori * mySizer = new ewol::SizerHori();
-			SetSubWidget(mySizer);
+			mySizerVert->SubWidgetAdd(mySizer);
 			
 			
 			MaListExemple * myList = new MaListExemple();
@@ -140,56 +169,10 @@ class Plop : public ewol::Windows
 			myList->SetFillY(true);
 			mySizer->SubWidgetAdd(myList);
 			
-			ewol::SizerVert * mySizerVert = new ewol::SizerVert();
-			mySizer->SubWidgetAdd(mySizerVert);
-			
-			ewol::Button * myButton = new ewol::Button("LB");
-			mySizerVert->SubWidgetAdd(myButton);
-			
-			ewol::Entry * myEntry = new ewol::Entry("basic Text");
-			myEntry->SetWidth(120);
-			mySizerVert->SubWidgetAdd(myEntry);
-			
-			ewol::Label * myLabel = new ewol::Label("Mon label");
-			myLabel->SetExpendY(true);
-			myLabel->SetFillY(true);
-			mySizerVert->SubWidgetAdd(myLabel);
-			
-			mySizerVert = new ewol::SizerVert();
-			mySizer->SubWidgetAdd(mySizerVert);
-			
-			myEntry = new ewol::Entry("Mega super plop");
-			//myEntry->SetExpendY(true);
-			//myEntry->SetFillY(true);
-			//myEntry->SetExpendX(true);
-			myEntry->SetFillX(true);
-			myEntry->SetWidth(120);
-			mySizerVert->SubWidgetAdd(myEntry);
-			
-			
-			myButton = new ewol::Button("Test Pop-up");
-			myButton->SetExpendX(true);
-			//myButton->SetExpendY(true);
-			myButton->SetFillX(true);
-			myButton->RegisterOnEvent(this, ewolEventButtonPressed, drawerEventRequestOpenFile);
-			mySizerVert->SubWidgetAdd(myButton);
-			
-			ewol::CheckBox * myCheckBox = new ewol::CheckBox("mon label d'eK");
-			mySizerVert->SubWidgetAdd(myCheckBox);
-			myCheckBox = new ewol::CheckBox("Exemple 2");
-			mySizerVert->SubWidgetAdd(myCheckBox);
-			myCheckBox = new ewol::CheckBox("Exemple 3 et יא$");
-			mySizerVert->SubWidgetAdd(myCheckBox);
-			
-			myButton = new ewol::Button("4 4 BT");
-			myButton->SetFillX(true);
-			myButton->SetFillY(true);
-			myButton->SetExpendY(true);
-			mySizerVert->SubWidgetAdd(myButton);
 			
 		};
 		
-		~Plop(void)
+		~MainWindows(void)
 		{
 			
 		};
@@ -227,13 +210,14 @@ class Plop : public ewol::Windows
 		};
 };
 
-static Plop * myWindowsExample = NULL;
+static MainWindows * basicWindows = NULL;
 
 /**
  * @brief main application function Initialisation
  */
 void APP_Init(void)
 {
+	DRAW_INFO("==> Init Ewol Drawer (START)");
 	ewol::ChangeSize(800, 600);
 	/*
 	if (true == ewol::AddFont("dataTest/TextMonospace.ebt", true, true, true) ) {
@@ -270,11 +254,12 @@ void APP_Init(void)
 		ewol::SetDefaultFont("freefont/FreeSerif.ttf", 12);
 	#endif
 	
-	myWindowsExample = new Plop();
+	basicWindows = new MainWindows();
 	
 	
 	// create the specific windows
-	ewol::DisplayWindows(myWindowsExample);
+	ewol::DisplayWindows(basicWindows);
+	DRAW_INFO("==> Init Ewol Drawer (END)");
 }
 
 /**
@@ -282,5 +267,13 @@ void APP_Init(void)
  */
 void APP_UnInit(void)
 {
-	delete(myWindowsExample);
+	DRAW_INFO("==> Un-Init Ewol Drawer (START)");
+	// Remove windows :
+	ewol::DisplayWindows(NULL);
+	
+	if (NULL != basicWindows) {
+		basicWindows->MarkToRemove();
+		basicWindows = NULL;
+	}
+	DRAW_INFO("==> Un-Init Ewol Drawer (END)");
 }

@@ -27,6 +27,7 @@
 #include <ewol/Font.h>
 #include <ewol/themeManager.h>
 #include <ewol/widget/Button.h>
+#include <ewol/widget/ButtonColor.h>
 #include <ewol/widget/CheckBox.h>
 #include <ewol/widget/SizerHori.h>
 #include <ewol/widget/SizerVert.h>
@@ -39,6 +40,7 @@
 #include <ewol/widgetMeta/FileChooser.h>
 #include <ewol/WidgetManager.h>
 #include <globalMsg.h>
+#include <widgetDrawer.h>
 
 #include <Debug.h>
 
@@ -162,12 +164,51 @@ class MainWindows :public ewol::Windows
 			ewol::SizerHori * mySizer = new ewol::SizerHori();
 			mySizerVert->SubWidgetAdd(mySizer);
 			
+			ewol::SizerVert * mySizerVert2 = new ewol::SizerVert();
+			mySizer->SubWidgetAdd(mySizerVert2);
 			
 			MaListExemple * myList = new MaListExemple();
 			//myList->SetExpendX(true);
 			myList->SetExpendY(true);
 			myList->SetFillY(true);
-			mySizer->SubWidgetAdd(myList);
+			mySizerVert2->SubWidgetAdd(myList);
+			
+			ewol::ButtonColor * mybtColor = new ewol::ButtonColor();
+			mybtColor->SetFillX(true);
+			color_ts tmpColor;
+			tmpColor.red   = 1.0;
+			tmpColor.green = 0.0;
+			tmpColor.blue  = 0.0;
+			tmpColor.alpha = 1.0;
+			mybtColor->SetCurrentColor(tmpColor);
+			mySizerVert2->SubWidgetAdd(mybtColor);
+			
+			mybtColor = new ewol::ButtonColor();
+			mybtColor->SetFillX(true);
+			tmpColor.red   = 0.0;
+			tmpColor.green = 1.0;
+			tmpColor.blue  = 0.0;
+			tmpColor.alpha = 1.0;
+			mybtColor->SetCurrentColor(tmpColor);
+			mySizerVert2->SubWidgetAdd(mybtColor);
+			
+			mybtColor = new ewol::ButtonColor();
+			mybtColor->SetFillX(true);
+			tmpColor.red   = 0.0;
+			tmpColor.green = 0.0;
+			tmpColor.blue  = 1.0;
+			tmpColor.alpha = 1.0;
+			mybtColor->SetCurrentColor(tmpColor);
+			mySizerVert2->SubWidgetAdd(mybtColor);
+			
+			widgetDrawer * monDrawer = new widgetDrawer();
+			monDrawer->SetFontSize(11);
+			monDrawer->SetFontNameNormal("freefont/FreeSerif.ttf");
+			monDrawer->SetExpendX(true);
+			monDrawer->SetExpendY(true);
+			monDrawer->SetFillX(true);
+			monDrawer->SetFillY(true);
+			mySizer->SubWidgetAdd(monDrawer);
 			
 			
 		};
@@ -256,6 +297,8 @@ void APP_Init(void)
 	
 	basicWindows = new MainWindows();
 	
+	
+	ewol::shortCut::Add("ctrl+t",       drawMsgGuiLinkNew,   "");
 	
 	// create the specific windows
 	ewol::DisplayWindows(basicWindows);

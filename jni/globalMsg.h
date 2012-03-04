@@ -37,6 +37,7 @@
 	extern const char* const drawMsgGuiDotRm;
 	extern const char* const drawMsgGuiLinkStart;
 	extern const char* const drawMsgGuiLinkStop;
+	extern const char* const drawMsgGuiLinkNew;
 
 #endif
 

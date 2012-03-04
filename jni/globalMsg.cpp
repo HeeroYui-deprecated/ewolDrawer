@@ -34,3 +34,4 @@ extern const char* const drawMsgGuiDotAdd          = "draw-Msg-Gui-Dot-Add";
 extern const char* const drawMsgGuiDotRm           = "draw-Msg-Gui-Dot-Rm";
 extern const char* const drawMsgGuiLinkStart       = "draw-Msg-Gui-Link-Start";
 extern const char* const drawMsgGuiLinkStop        = "draw-Msg-Gui-Link-Stop";
+extern const char* const drawMsgGuiLinkNew        = "draw-Msg-Gui-Link-New";

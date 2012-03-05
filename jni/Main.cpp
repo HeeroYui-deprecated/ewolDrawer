@@ -36,6 +36,7 @@
 #include <ewol/widget/List.h>
 #include <ewol/widget/PopUp.h>
 #include <ewol/widget/Spacer.h>
+#include <ewol/widget/ColorBar.h>
 #include <ewol/widget/Menu.h>
 #include <ewol/widgetMeta/FileChooser.h>
 #include <ewol/WidgetManager.h>
@@ -172,6 +173,10 @@ class MainWindows :public ewol::Windows
 			myList->SetExpendY(true);
 			myList->SetFillY(true);
 			mySizerVert2->SubWidgetAdd(myList);
+			
+			ewol::ColorBar * myColorBar = new ewol::ColorBar();
+			myColorBar->SetFillX(true);
+			mySizerVert2->SubWidgetAdd(myColorBar);
 			
 			ewol::ButtonColor * mybtColor = new ewol::ButtonColor();
 			mybtColor->SetFillX(true);

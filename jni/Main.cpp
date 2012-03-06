@@ -174,10 +174,6 @@ class MainWindows :public ewol::Windows
 			myList->SetFillY(true);
 			mySizerVert2->SubWidgetAdd(myList);
 			
-			ewol::ColorBar * myColorBar = new ewol::ColorBar();
-			myColorBar->SetFillX(true);
-			mySizerVert2->SubWidgetAdd(myColorBar);
-			
 			ewol::ButtonColor * mybtColor = new ewol::ButtonColor();
 			mybtColor->SetFillX(true);
 			color_ts tmpColor;

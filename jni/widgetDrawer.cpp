@@ -68,11 +68,10 @@ bool widgetDrawer::CalculateMinSize(void)
 	return true;
 }
 
-bool widgetDrawer::OnDraw(void)
+void widgetDrawer::OnDraw(void)
 {
 	m_OObjectsColored[      m_currentDrawId].Draw();
 	m_OObjectTextNormal[    m_currentDrawId].Draw();
-	return true;
 }
 #define BORDER_SIZE       (2)
 void widgetDrawer::OnRegenerateDisplay(void)
@@ -227,9 +226,18 @@ int32_t widgetDrawer::GetNearestPoint(coord2D_ts pos)
 	return idNearest;
 }
 
-
-bool widgetDrawer::OnEventInput(int32_t IdInput, ewol::eventInputType_te typeEvent, ewol::eventPosition_ts pos)
+/**
+ * @brief Event on an input of this Widget
+ * @param[in] IdInput Id of the current Input (PC : left=1, right=2, middle=3, none=0 / Tactil : first finger=1 , second=2 (only on this widget, no knowledge at ouside finger))
+ * @param[in] typeEvent ewol type of event like EVENT_INPUT_TYPE_DOWN/EVENT_INPUT_TYPE_MOVE/EVENT_INPUT_TYPE_UP/EVENT_INPUT_TYPE_SINGLE/EVENT_INPUT_TYPE_DOUBLE/...
+ * @param[in] pos Absolute position of the event
+ * @return true the event is used
+ * @return false the event is not used
+ */
+bool widgetDrawer::OnEventInput(int32_t IdInput, ewol::eventInputType_te typeEvent, coord2D_ts pos)
 {
+	coord2D_ts relativePos = RelativePosition(pos);
+	
 	coord2D_ts drawPosStart;
 	coord2D_ts drawPosStop;
 	if (m_size.x < m_size.y) {
@@ -244,8 +252,8 @@ bool widgetDrawer::OnEventInput(int32_t IdInput, ewol::eventInputType_te typeEve
 		drawPosStop.y = m_size.y-2*BORDER_SIZE;
 	}
 	coord2D_ts position;
-	position.x = (pos.local.x - BORDER_SIZE) / (drawPosStop.x-drawPosStart.x);
-	position.y = (pos.local.y - BORDER_SIZE) / (drawPosStop.y-drawPosStart.y);
+	position.x = (relativePos.x - BORDER_SIZE) / (drawPosStop.x-drawPosStart.x);
+	position.y = (relativePos.y - BORDER_SIZE) / (drawPosStop.y-drawPosStart.y);
 	
 	if (1 == IdInput) {
 		if ( ewol::EVENT_INPUT_TYPE_SINGLE == typeEvent) {
@@ -274,10 +282,10 @@ bool widgetDrawer::OnEventInput(int32_t IdInput, ewol::eventInputType_te typeEve
 			MarkToReedraw();
 		} else if (ewol::EVENT_INPUT_TYPE_MOVE == typeEvent && true == m_movingPoint) {
 			// check if neede moving ...
-			if(    pos.local.x < drawPosStart.x
-			    || pos.local.y < drawPosStart.y
-			    || pos.local.x > drawPosStop.x
-			    || pos.local.y > drawPosStop.y) {
+			if(    relativePos.x < drawPosStart.x
+			    || relativePos.y < drawPosStart.y
+			    || relativePos.x > drawPosStop.x
+			    || relativePos.y > drawPosStop.y) {
 				// No data to add ...
 				return false;
 			}
@@ -286,10 +294,10 @@ bool widgetDrawer::OnEventInput(int32_t IdInput, ewol::eventInputType_te typeEve
 		}
 	} else if (3 == IdInput && ewol::EVENT_INPUT_TYPE_SINGLE == typeEvent) {
 		// chack if not outside the cadre
-		if(    pos.local.x < drawPosStart.x
-		    || pos.local.y < drawPosStart.y
-		    || pos.local.x > drawPosStop.x
-		    || pos.local.y > drawPosStop.y) {
+		if(    relativePos.x < drawPosStart.x
+		    || relativePos.y < drawPosStart.y
+		    || relativePos.x > drawPosStop.x
+		    || relativePos.y > drawPosStop.y) {
 			// No data to add ...
 			return false;
 		}

@@ -27,6 +27,7 @@
 #include <Debug.h>
 
 #include <ewol/ewol.h>
+#include "tinyXML/tinyxml.h"
 
 #include <globalMsg.h>
 #include <ewol/WidgetManager.h>
@@ -399,3 +400,70 @@ void widgetDrawer::SetColorOnSelected(color_ts newColor)
 	}
 	MarkToReedraw();
 }
+
+
+void widgetDrawer::Load(etk::UString fileName)
+{
+	DRAW_TODO("LATER ... ");
+}
+/*
+<e2d ratio="1.000">
+	<element name="hjhj">
+		<dot id=1 x="0.2352" y="0.435634" />
+		<dot id=2 x="0.6746" y="0.323467" />
+		<dot id=3 x="0.4657" y="0.234131" />
+		<dot id=3 x="0.00000" y="1.000000" />
+		<link id1="1" color1="#45F645FF"
+		      id2="2" color2="#345635FF"
+		      id3="4" color3="#867757FF"/>
+	</element>
+</e2d>
+*/
+void widgetDrawer::Save(etk::UString fileName)
+{
+	TiXmlDocument doc;
+	TiXmlDeclaration * decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
+	doc.LinkEndChild( decl );
+	TiXmlElement * mastertElement = new TiXmlElement( "e2d" );
+	mastertElement->SetAttribute( "version", "0.1" );
+	doc.LinkEndChild( mastertElement ); 
+	
+	TiXmlElement * element = new TiXmlElement( "element" );
+	element->SetAttribute( "name", "???" );
+	mastertElement->LinkEndChild( element );
+	
+	for(int32_t iii=0; iii<m_dotList.Size() ; iii++) {
+		TiXmlElement * elementDot = new TiXmlElement( "dot" );
+		elementDot->SetAttribute( "id", iii );
+		elementDot->SetAttribute( "x", m_dotList[iii].x );
+		elementDot->SetAttribute( "y", m_dotList[iii].y );
+		element->LinkEndChild( elementDot );
+	}
+	for(int32_t iii=0; iii<m_linkList.Size() ; iii++) {
+		TiXmlElement * elementDot = new TiXmlElement( "link" );
+		elementDot->SetAttribute( "id1", m_linkList[iii].dot[0] );
+		char colorText[256];
+		sprintf(colorText, "#%02X%02X%02X%02X",
+		        (uint8_t)(m_linkList[iii].color[0].red   * 0xFF),
+		        (uint8_t)(m_linkList[iii].color[0].green * 0xFF),
+		        (uint8_t)(m_linkList[iii].color[0].blue  * 0xFF),
+		        (uint8_t)(m_linkList[iii].color[0].alpha * 0xFF));
+		elementDot->SetAttribute( "color1", colorText );
+		elementDot->SetAttribute( "id2", m_linkList[iii].dot[1] );
+		sprintf(colorText, "#%02X%02X%02X%02X",
+		        (uint8_t)(m_linkList[iii].color[1].red   * 0xFF),
+		        (uint8_t)(m_linkList[iii].color[1].green * 0xFF),
+		        (uint8_t)(m_linkList[iii].color[1].blue  * 0xFF),
+		        (uint8_t)(m_linkList[iii].color[1].alpha * 0xFF));
+		elementDot->SetAttribute( "color2", colorText );
+		elementDot->SetAttribute( "id3", m_linkList[iii].dot[2] );
+		sprintf(colorText, "#%02X%02X%02X%02X",
+		        (uint8_t)(m_linkList[iii].color[2].red   * 0xFF),
+		        (uint8_t)(m_linkList[iii].color[2].green * 0xFF),
+		        (uint8_t)(m_linkList[iii].color[2].blue  * 0xFF),
+		        (uint8_t)(m_linkList[iii].color[2].alpha * 0xFF));
+		elementDot->SetAttribute( "color3", colorText );
+		element->LinkEndChild( elementDot );
+	}
+}
+

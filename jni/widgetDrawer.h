@@ -98,6 +98,8 @@ class widgetDrawer :public ewol::Widget
 		int32_t GetNearestPoint(coord2D_ts pos);
 		etkFloat_t QuadDistance(coord2D_ts aaa, coord2D_ts bbb);
 		bool DotIsSelected(int32_t dotId);
+		void Load(etk::UString fileName);
+		void Save(etk::UString fileName);
 };
 
 #endif

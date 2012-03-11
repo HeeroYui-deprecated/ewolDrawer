@@ -129,9 +129,13 @@ const char * const drawerEventRequestOpenFile         = "Drawer Request Open Fil
 const char * const drawerEventRequestOpenFileClosed   = "Drawer Close Open File";
 const char * const drawerEventRequestOpenFileSelected = "Drawer Open Selected File";
 
+const char * const drawerEventColorHasChange = "Drawer-select-color-change";
+
 
 class MainWindows :public ewol::Windows
 {
+	private:
+		widgetDrawer* m_drawer;
 	public:
 		MainWindows(void)
 		{
@@ -182,6 +186,7 @@ class MainWindows :public ewol::Windows
 			tmpColor.blue  = 0.0;
 			tmpColor.alpha = 1.0;
 			mybtColor->SetCurrentColor(tmpColor);
+			mybtColor->RegisterOnEvent(this, ewolEventButtonColorChange, drawerEventColorHasChange);
 			mySizerVert2->SubWidgetAdd(mybtColor);
 			
 			mybtColor = new ewol::ButtonColor();
@@ -202,14 +207,14 @@ class MainWindows :public ewol::Windows
 			mybtColor->SetCurrentColor(tmpColor);
 			mySizerVert2->SubWidgetAdd(mybtColor);
 			
-			widgetDrawer * monDrawer = new widgetDrawer();
-			monDrawer->SetFontSize(11);
-			monDrawer->SetFontNameNormal("freefont/FreeSerif.ttf");
-			monDrawer->SetExpendX(true);
-			monDrawer->SetExpendY(true);
-			monDrawer->SetFillX(true);
-			monDrawer->SetFillY(true);
-			mySizer->SubWidgetAdd(monDrawer);
+			m_drawer = new widgetDrawer();
+			m_drawer->SetFontSize(11);
+			m_drawer->SetFontNameNormal("freefont/FreeSerif.ttf");
+			m_drawer->SetExpendX(true);
+			m_drawer->SetExpendY(true);
+			m_drawer->SetFillX(true);
+			m_drawer->SetFillY(true);
+			mySizer->SubWidgetAdd(m_drawer);
 			
 			
 		};
@@ -229,6 +234,8 @@ class MainWindows :public ewol::Windows
 		 */
 		virtual void OnReceiveMessage(ewol::EObject * CallerObject, const char * eventId, etk::UString data)
 		{
+			ewol::Windows::OnReceiveMessage(CallerObject, eventId, data);
+			
 			DRAW_INFO("Receive Event from the main windows ... : widgetid=" << CallerObject << " ==> " << eventId << " ==> data=\"" << data << "\"" );
 			if (eventId == drawerEventRequestOpenFile) {
 				ewol::FileChooser* tmpWidget = new ewol::FileChooser();
@@ -247,9 +254,33 @@ class MainWindows :public ewol::Windows
 				// get the filename : 
 				etk::UString tmpData = tmpWidget->GetCompleateFileName();
 				DRAW_DEBUG("Request opening the file : " << tmpData);
+			} else if (eventId == drawerEventColorHasChange) {
+				// the button color has change ==> we really change the current color ...
+				if (NULL != CallerObject) {
+					ewol::ButtonColor * tmpColorButton = static_cast<ewol::ButtonColor*>(CallerObject);
+					color_ts tmpColor = tmpColorButton->GetCurrentColor();
+					if (NULL != m_drawer) {
+						m_drawer->SetColorOnSelected(tmpColor);
+					}
+				}
 			}
 			return;
 		};
+		/**
+		 * @brief Inform object that an other object is removed ...
+		 * @param[in] removeObject Pointer on the EObject remeved ==> the user must remove all reference on this EObject
+		 * @note : Sub classes must call this class
+		 * @return ---
+		 */
+		virtual void OnObjectRemove(ewol::EObject * removeObject)
+		{
+			ewol::Windows::OnObjectRemove(removeObject);
+			
+			if (removeObject == m_drawer) {
+				m_drawer = NULL;
+				m_needFlipFlop = true;
+			}
+		}
 };
 
 static MainWindows * basicWindows = NULL;

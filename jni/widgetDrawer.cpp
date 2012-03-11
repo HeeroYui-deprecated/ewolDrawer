@@ -52,6 +52,12 @@ widgetDrawer::widgetDrawer(void)
 	m_textColorBg.green = 0.0;
 	m_textColorBg.blue  = 0.0;
 	m_textColorBg.alpha = 0.25;
+	
+	m_triangleColor.red   = 0.0;
+	m_triangleColor.green = 1.0;
+	m_triangleColor.blue  = 0.0;
+	m_triangleColor.alpha = 1.0;
+	
 	RegisterMultiCast(drawMsgGuiLinkNew);
 	SetCanHaveFocus(true);
 }
@@ -349,20 +355,9 @@ void widgetDrawer::OnReceiveMessage(ewol::EObject * CallerObject, const char * e
 			tmpLink.dot[0] = m_selectedList[0];
 			tmpLink.dot[1] = m_selectedList[1];
 			tmpLink.dot[2] = m_selectedList[2];
-			tmpLink.color[0].red   = 0.0;
-			tmpLink.color[0].green = 0.0;
-			tmpLink.color[0].blue  = 1.0;
-			tmpLink.color[0].alpha = 1.0;
-			
-			tmpLink.color[1].red   = 0.0;
-			tmpLink.color[1].green = 1.0;
-			tmpLink.color[1].blue  = 0.0;
-			tmpLink.color[1].alpha = 1.0;
-			
-			tmpLink.color[2].red   = 1.0;
-			tmpLink.color[2].green = 0.0;
-			tmpLink.color[2].blue  = 0.0;
-			tmpLink.color[2].alpha = 1.0;
+			tmpLink.color[0] = m_triangleColor;
+			tmpLink.color[1] = m_triangleColor;
+			tmpLink.color[2] = m_triangleColor;
 			m_linkList.PushBack(tmpLink);
 			MarkToReedraw();
 		}
@@ -380,4 +375,27 @@ void widgetDrawer::SetFontNameNormal(etk::UString fontName)
 	if (fontID >= 0) {
 		m_fontNormal = fontID;
 	}
+}
+
+void widgetDrawer::SetColorOnSelected(color_ts newColor)
+{
+	m_triangleColor = newColor;
+	// Remove all selected points ...
+	for(int32_t iii=0; iii<m_dotList.Size() ; iii++) {
+		if (true == DotIsSelected(iii)) {
+			// Remove all link who have a selected point : 
+			for(int32_t jjj=0 ; jjj<m_linkList.Size() ; jjj++) {
+				if(m_linkList[jjj].dot[0] == iii) {
+					m_linkList[jjj].color[0] = newColor;
+				}
+				if(m_linkList[jjj].dot[1] == iii) {
+					m_linkList[jjj].color[1] = newColor;
+				}
+				if(m_linkList[jjj].dot[2] == iii) {
+					m_linkList[jjj].color[2] = newColor;
+				}
+			}
+		}
+	}
+	MarkToReedraw();
 }

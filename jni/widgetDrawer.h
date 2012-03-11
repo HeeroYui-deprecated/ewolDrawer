@@ -43,8 +43,9 @@ class widgetDrawer :public ewol::Widget
 		virtual ~widgetDrawer(void);
 		virtual bool   CalculateMinSize(void);
 	private:
-		color_ts                     m_textColorFg;  //!< Text color
-		color_ts                     m_textColorBg;  //!< Background color
+		color_ts                     m_triangleColor;  //!< color for the next element of the triangle
+		color_ts                     m_textColorFg;    //!< Text color
+		color_ts                     m_textColorBg;    //!< Background color
 		// drawing elements :
 		ewol::OObject2DTextColored   m_OObjectTextNormal[NB_BOUBLE_BUFFER];
 		ewol::OObject2DColored       m_OObjectsColored[NB_BOUBLE_BUFFER];
@@ -84,6 +85,7 @@ class widgetDrawer :public ewol::Widget
 	public:
 		void SetFontSize(int32_t size);
 		void SetFontNameNormal(etk::UString fontName);
+		void SetColorOnSelected(color_ts newColor);
 	protected:
 		virtual void OnDraw(void);
 	private:

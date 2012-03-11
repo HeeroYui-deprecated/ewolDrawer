@@ -26,6 +26,8 @@
 
 #include <Debug.h>
 
+#include <ewol/ewol.h>
+
 #include <globalMsg.h>
 #include <ewol/WidgetManager.h>
 #include <ewol/EObject.h>
@@ -39,10 +41,8 @@ widgetDrawer::widgetDrawer(void)
 {
 	m_fontNormal = -1;
 	m_fontSize = 15;
+	m_nearestDot = -1;
 	m_movingPoint = false;
-	m_lastSelected[0] = -1;
-	m_lastSelected[1] = -1;
-	m_lastSelected[2] = -1;
 	m_textColorFg.red   = 0.0;
 	m_textColorFg.green = 	0.0;
 	m_textColorFg.blue  = 0.0;
@@ -132,7 +132,7 @@ void widgetDrawer::OnRegenerateDisplay(void)
 			coord2D_ts position;
 			position.x = BORDER_SIZE + m_dotList[iii].x * (drawPosStop.x-drawPosStart.x);
 			position.y = BORDER_SIZE + m_dotList[iii].y * (drawPosStop.y-drawPosStart.y);
-			if (m_lastSelected[2] == iii) {
+			if (true == DotIsSelected(iii)) {
 				color_ts tmpColor;
 				tmpColor.red   = 1.0;
 				tmpColor.green = 0.0;
@@ -141,44 +141,20 @@ void widgetDrawer::OnRegenerateDisplay(void)
 				m_OObjectsColored[m_currentCreateId].SetColor(tmpColor);
 				m_OObjectsColored[m_currentCreateId].Rectangle( position.x-1, position.y-1, 3, 3);
 				m_OObjectsColored[m_currentCreateId].SetColor(bgColor);
-			} else if (m_lastSelected[1] == iii) {
+			} else {
+				m_OObjectsColored[m_currentCreateId].RectangleBorder( position.x-1, position.y-1, 3, 3, 1);
+			}
+			if (m_nearestDot == iii) {
 				color_ts tmpColor;
-				tmpColor.red   = 0.0;
-				tmpColor.green = 1.0;
-				tmpColor.blue  = 0.0;
-				tmpColor.alpha = 1.0;
-				m_OObjectsColored[m_currentCreateId].SetColor(tmpColor);
-				m_OObjectsColored[m_currentCreateId].Rectangle( position.x-1, position.y-1, 3, 3);
-				m_OObjectsColored[m_currentCreateId].SetColor(bgColor);
-			} else if (m_lastSelected[0] == iii) {
-				color_ts tmpColor;
-				tmpColor.red   = 0.0;
+				tmpColor.red   = 1.0;
 				tmpColor.green = 0.0;
 				tmpColor.blue  = 1.0;
 				tmpColor.alpha = 1.0;
 				m_OObjectsColored[m_currentCreateId].SetColor(tmpColor);
-				m_OObjectsColored[m_currentCreateId].Rectangle( position.x-1, position.y-1, 3, 3);
+				m_OObjectsColored[m_currentCreateId].Circle( position.x, position.y, 6, 1);
 				m_OObjectsColored[m_currentCreateId].SetColor(bgColor);
-			} else {
-				m_OObjectsColored[m_currentCreateId].RectangleBorder( position.x-1, position.y-1, 3, 3, 1);
 			}
 		}
-		
-		/*
-		coord2D_ts textPos;
-		textPos.x = 20;
-		textPos.y = 20;
-		color_ts myColor;
-		myColor.red   = 1.0;
-		myColor.green = 0.0;
-		myColor.blue  = 0.0;
-		myColor.alpha = 1.0;
-		m_OObjectTextNormal[m_currentCreateId].SetColor(myColor);
-		etk::UString tmpDisplay = "test de text";
-		m_OObjectTextNormal[m_currentCreateId].Text(textPos, tmpDisplay);
-		*/
-		
-		
 		m_needFlipFlop = true;
 	}
 }
@@ -186,10 +162,39 @@ void widgetDrawer::OnRegenerateDisplay(void)
 
 bool widgetDrawer::OnEventKb(ewol::eventKbType_te typeEvent, uniChar_t unicodeData)
 {
-	//EDN_DEBUG("KB EVENT : \"" << UTF8_data << "\" size=" << strlen(UTF8_data) << "type=" << (int32_t)typeEvent);
-	if (typeEvent == ewol::EVENT_KB_TYPE_DOWN) {
-		
-		MarkToReedraw();
+	//DRAW_DEBUG("KB EVENT : \"" << unicodeData << "\"" << "type=" << (int32_t)typeEvent);
+	if (typeEvent == ewol::EVENT_KB_TYPE_UP) {
+		if (unicodeData == 0x7F) {
+			// Remove all selected points ...
+			for(int32_t iii=m_dotList.Size()-1 ; iii>=0 ; iii--) {
+				if (true == DotIsSelected(iii)) {
+					// Remove all link who have a selected point : 
+					for(int32_t jjj=m_linkList.Size()-1; jjj>=0; jjj--) {
+						if(     m_linkList[jjj].dot[0] == iii
+						     || m_linkList[jjj].dot[1] == iii
+						     || m_linkList[jjj].dot[2] == iii ) {
+							m_linkList.Erase(jjj);
+						}
+					}
+					m_dotList.Erase(iii);
+					for(int32_t jjj=m_linkList.Size()-1; jjj>=0; jjj--) {
+						if(m_linkList[jjj].dot[0] > iii) {
+							m_linkList[jjj].dot[0]--;
+						}
+						if(m_linkList[jjj].dot[1] > iii) {
+							m_linkList[jjj].dot[1]--;
+						}
+						if(m_linkList[jjj].dot[2] > iii) {
+							m_linkList[jjj].dot[2]--;
+						}
+					}
+				}
+			}
+			// rmemove all the selected list
+			m_selectedList.Clear();
+			
+			MarkToReedraw();
+		}
 	}
 	return true;
 }
@@ -226,6 +231,16 @@ int32_t widgetDrawer::GetNearestPoint(coord2D_ts pos)
 	return idNearest;
 }
 
+bool widgetDrawer::DotIsSelected(int32_t dotId)
+{
+	for( int32_t iii=0; iii< m_selectedList.Size(); iii++) {
+		if (m_selectedList[iii] == dotId) {
+			return true;
+		}
+	}
+	return false;
+}
+
 /**
  * @brief Event on an input of this Widget
  * @param[in] IdInput Id of the current Input (PC : left=1, right=2, middle=3, none=0 / Tactil : first finger=1 , second=2 (only on this widget, no knowledge at ouside finger))
@@ -255,54 +270,61 @@ bool widgetDrawer::OnEventInput(int32_t IdInput, ewol::eventInputType_te typeEve
 	position.x = (relativePos.x - BORDER_SIZE) / (drawPosStop.x-drawPosStart.x);
 	position.y = (relativePos.y - BORDER_SIZE) / (drawPosStop.y-drawPosStart.y);
 	
-	if (1 == IdInput) {
+	position.x = etk_avg(0, position.x, 1);
+	position.y = etk_avg(0, position.y, 1);
+	//DRAW_DEBUG(" event " << IdInput);
+	if (0 == IdInput) {
+		m_nearestDot = GetNearestPoint(position);
+		MarkToReedraw();
+	} else  if (1 == IdInput) {
+		KeepFocus();
 		if ( ewol::EVENT_INPUT_TYPE_SINGLE == typeEvent) {
 			// try to find the point
 			int select = GetNearestPoint(position);
-			if (select != m_lastSelected[2]) {
-				if (select == m_lastSelected[1] ) {
-					m_lastSelected[1] = m_lastSelected[2];
-					m_lastSelected[2] = select;
-				} else {
-					m_lastSelected[0] = m_lastSelected[1];
-					m_lastSelected[1] = m_lastSelected[2];
-					m_lastSelected[2] = select;
-				}
+			if (false == ewol::IsSetShift() ) {
+				m_selectedList.Clear();
+				m_selectedList.PushBack(select);
 				MarkToReedraw();
+			} else {
+				if (false == DotIsSelected(select)) {
+					// add element in the list
+					m_selectedList.PushBack(select);
+					MarkToReedraw();
+				} else {
+					// remove it ...
+					for (int32_t iii=m_selectedList.Size()-1 ; iii>=0 ; iii--) {
+						if (m_selectedList[iii] == select) {
+							m_selectedList.Erase(iii);
+						}
+					}
+				}
 			}
 		} if ( ewol::EVENT_INPUT_TYPE_DOWN == typeEvent) {
 			// try to find the point
 			int select = GetNearestPoint(position);
-			if (select == m_lastSelected[2]) {
-				MarkToReedraw();
-				m_movingPoint = true;
+			if (m_selectedList.Size() == 1) {
+				if (select == m_selectedList[0]) {
+					MarkToReedraw();
+					m_movingPoint = true;
+				}
 			}
 		} else if (ewol::EVENT_INPUT_TYPE_UP == typeEvent) {
 			m_movingPoint = false;
 			MarkToReedraw();
 		} else if (ewol::EVENT_INPUT_TYPE_MOVE == typeEvent && true == m_movingPoint) {
-			// check if neede moving ...
-			if(    relativePos.x < drawPosStart.x
-			    || relativePos.y < drawPosStart.y
-			    || relativePos.x > drawPosStop.x
-			    || relativePos.y > drawPosStop.y) {
-				// No data to add ...
+			if (m_selectedList.Size() != 1) {
+				m_movingPoint = false;
 				return false;
 			}
-			m_dotList[m_lastSelected[2]] = position;
+			// set it in the drawing area
+			relativePos.x = etk_avg(drawPosStart.x, relativePos.x, drawPosStop.x);
+			relativePos.y = etk_avg(drawPosStart.y, relativePos.y, drawPosStop.y);
+			// instanciate the value ...
+			m_dotList[m_selectedList[0]] = position;
 			MarkToReedraw();
 		}
 	} else if (3 == IdInput && ewol::EVENT_INPUT_TYPE_SINGLE == typeEvent) {
-		// chack if not outside the cadre
-		if(    relativePos.x < drawPosStart.x
-		    || relativePos.y < drawPosStart.y
-		    || relativePos.x > drawPosStop.x
-		    || relativePos.y > drawPosStop.y) {
-			// No data to add ...
-			return false;
-		}
-		// convert the current position in a float -1 < x?y < 1
-		// TODO : Set a min/max ..
+		
 		m_dotList.PushBack(position);
 		MarkToReedraw();
 	}
@@ -322,16 +344,11 @@ void widgetDrawer::OnReceiveMessage(ewol::EObject * CallerObject, const char * e
 {
 	DRAW_DEBUG("Extern Event : " << CallerObject << "  type : " << eventId << "  data=\"" << data << "\"");
 	if (eventId == drawMsgGuiLinkNew) {
-		if(    m_lastSelected[0] != -1
-		    && m_lastSelected[1] != -1
-		    && m_lastSelected[2] != -1) {
+		if (m_selectedList.Size() == 3) {
 			link_ts tmpLink;
-			tmpLink.dot[0] = m_lastSelected[0];
-			tmpLink.dot[1] = m_lastSelected[1];
-			tmpLink.dot[2] = m_lastSelected[2];
-			m_lastSelected[0] = -1;
-			m_lastSelected[1] = -1;
-			m_lastSelected[2] = -1;
+			tmpLink.dot[0] = m_selectedList[0];
+			tmpLink.dot[1] = m_selectedList[1];
+			tmpLink.dot[2] = m_selectedList[2];
 			tmpLink.color[0].red   = 0.0;
 			tmpLink.color[0].green = 0.0;
 			tmpLink.color[0].blue  = 1.0;

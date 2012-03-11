@@ -69,6 +69,13 @@ class widgetDrawer :public ewol::Widget
 		 * @return false the event is not used
 		 */
 		virtual bool OnEventInput(int32_t IdInput, ewol::eventInputType_te typeEvent, coord2D_ts pos);
+		/**
+		 * @brief Event on the keybord (if no shortcut has been detected before).
+		 * @param[in] type of the event (ewol::EVENT_KB_TYPE_DOWN or ewol::EVENT_KB_TYPE_UP)
+		 * @param[in] unicodeValue key pressed by the user
+		 * @return true if the event has been used
+		 * @return false if the event has not been used
+		 */
 		virtual bool OnEventKb(ewol::eventKbType_te typeEvent, uniChar_t unicodeData);
 		virtual bool OnEventKbMove(ewol::eventKbType_te typeEvent, ewol::eventKbMoveType_te moveTypeEvent);
 	private:
@@ -81,12 +88,14 @@ class widgetDrawer :public ewol::Widget
 		virtual void OnDraw(void);
 	private:
 		etk::VectorType<coord2D_ts>   m_dotList;       //!< list of all point in the buffer
-		etk::VectorType<link_ts>      m_linkList;  //!< 
-		int32_t                       m_lastSelected[3];
+		etk::VectorType<link_ts>      m_linkList;      //!< List of all triangle in the mesh
+		etk::VectorType<int32_t>      m_selectedList;  //!< current selected points
+		int32_t                       m_nearestDot;    //!< nearest dot from the current cursor
 		bool                          m_movingPoint;
 		void removeDotId(int32_t id);
 		int32_t GetNearestPoint(coord2D_ts pos);
 		etkFloat_t QuadDistance(coord2D_ts aaa, coord2D_ts bbb);
+		bool DotIsSelected(int32_t dotId);
 };
 
 #endif

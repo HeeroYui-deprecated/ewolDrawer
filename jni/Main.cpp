@@ -216,7 +216,8 @@ class MainWindows :public ewol::Windows
 			m_drawer->SetFillY(true);
 			mySizer->SubWidgetAdd(m_drawer);
 			
-			
+			RegisterMultiCast(drawMsgGuiOpen);
+			RegisterMultiCast(drawMsgGuiSave);
 		};
 		
 		~MainWindows(void)
@@ -237,11 +238,10 @@ class MainWindows :public ewol::Windows
 			ewol::Windows::OnReceiveMessage(CallerObject, eventId, data);
 			
 			DRAW_INFO("Receive Event from the main windows ... : widgetid=" << CallerObject << " ==> " << eventId << " ==> data=\"" << data << "\"" );
-			if (eventId == drawerEventRequestOpenFile) {
+			if (eventId == drawMsgGuiOpen) {
 				ewol::FileChooser* tmpWidget = new ewol::FileChooser();
 				tmpWidget->SetTitle("Open Files ...");
 				tmpWidget->SetValidateLabel("Open");
-				tmpWidget->SetFolder("/");
 				PopUpWidgetPush(tmpWidget);
 				tmpWidget->RegisterOnEvent(this, ewolEventFileChooserValidate, drawerEventRequestOpenFileSelected);
 			} else if (eventId == drawerEventRequestOpenFileSelected) {
@@ -254,6 +254,17 @@ class MainWindows :public ewol::Windows
 				// get the filename : 
 				etk::UString tmpData = tmpWidget->GetCompleateFileName();
 				DRAW_DEBUG("Request opening the file : " << tmpData);
+				if (NULL != m_drawer) {
+					m_drawer->Load(tmpData);
+				}
+			} else if (eventId == drawMsgGuiSave) {
+				if (NULL != m_drawer) {
+					if (m_drawer->HasName()) {
+						m_drawer->Save();
+					} else {
+						DRAW_TODO("Later ...");
+					}
+				}
 			} else if (eventId == drawerEventColorHasChange) {
 				// the button color has change ==> we really change the current color ...
 				if (NULL != CallerObject) {

@@ -94,12 +94,16 @@ class widgetDrawer :public ewol::Widget
 		etk::VectorType<int32_t>      m_selectedList;  //!< current selected points
 		int32_t                       m_nearestDot;    //!< nearest dot from the current cursor
 		bool                          m_movingPoint;
+		etk::UString                  m_fileName;
 		void removeDotId(int32_t id);
 		int32_t GetNearestPoint(coord2D_ts pos);
 		etkFloat_t QuadDistance(coord2D_ts aaa, coord2D_ts bbb);
 		bool DotIsSelected(int32_t dotId);
+	public:
 		void Load(etk::UString fileName);
-		void Save(etk::UString fileName);
+		void Save(void);
+		void SetFilename(etk::UString fileName) {m_fileName = fileName; };
+		bool HasName(void) { if(m_fileName=="") { return false;} return true; };
 };
 
 #endif

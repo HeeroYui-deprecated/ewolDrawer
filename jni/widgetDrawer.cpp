@@ -127,6 +127,11 @@ void widgetDrawer::OnRegenerateDisplay(void)
 		m_OObjectTextNormal[    m_currentCreateId].Clear();
 		m_OObjectsColored[      m_currentCreateId].Clear();
 		// we set 3 pixels in the border (blue) and draw 
+		color_ts bandColor;
+		bandColor.red   = 0.0;
+		bandColor.green = 0.0;
+		bandColor.blue  = 0.0;
+		bandColor.alpha = 0.2;
 		color_ts bgColor;
 		bgColor.red   = 0.0;
 		bgColor.green = 0.0;
@@ -135,9 +140,9 @@ void widgetDrawer::OnRegenerateDisplay(void)
 		m_OObjectsColored[m_currentCreateId].SetColor(bgColor);
 		m_OObjectsColored[m_currentCreateId].Rectangle( 0, 0, m_size.x, m_size.y);
 		// we set a white background... and we draw a square ...
-		bgColor.red   = 1.0;
-		bgColor.green = 1.0;
-		bgColor.blue  = 1.0;
+		bgColor.red   = 0.8;
+		bgColor.green = 0.8;
+		bgColor.blue  = 0.8;
 		bgColor.alpha = 1.0;
 		m_OObjectsColored[m_currentCreateId].SetColor(bgColor);
 		coord2D_ts drawPosStart;
@@ -153,8 +158,23 @@ void widgetDrawer::OnRegenerateDisplay(void)
 			drawPosStop.x = m_size.y-2*BORDER_SIZE;
 			drawPosStop.y = m_size.y-2*BORDER_SIZE;
 		}
-		m_OObjectsColored[m_currentCreateId].Rectangle( drawPosStart.x, drawPosStart.y, drawPosStop.x, drawPosStop.y);
-		
+		m_OObjectsColored[m_currentCreateId].Rectangle(drawPosStart.x, drawPosStart.y, drawPosStop.x, drawPosStop.y);
+		m_OObjectsColored[m_currentCreateId].SetColor(bandColor);
+		clipping_ts clip;
+		clip.x = drawPosStart.x;
+		clip.y = drawPosStart.y;
+		clip.w = drawPosStop.x-drawPosStart.x + 2;
+		clip.h = drawPosStop.y-drawPosStart.y + 2;
+		m_OObjectsColored[m_currentCreateId].clippingSet(clip);
+		int32_t nbElement = (drawPosStop.x-drawPosStart.x)/20 +1;
+		for (int32_t iii=0; iii<nbElement; iii++) {
+			m_OObjectsColored[m_currentCreateId].Rectangle(drawPosStart.x + iii*20, drawPosStart.y, 10, drawPosStop.y);
+		}
+		nbElement = (drawPosStop.y-drawPosStart.y)/20 +1;
+		for (int32_t iii=0; iii<nbElement; iii++) {
+			m_OObjectsColored[m_currentCreateId].Rectangle(drawPosStart.x, drawPosStart.y + iii*20, drawPosStop.x, 10);
+		}
+		m_OObjectsColored[m_currentCreateId].clippingDisable();
 		for (int32_t iii=0; iii<m_linkList.Size(); iii++) {
 			for (int32_t jjj=0; jjj<3; jjj++) {
 				// set color
@@ -168,9 +188,9 @@ void widgetDrawer::OnRegenerateDisplay(void)
 			}
 		}
 		// we set a white background... and we draw a square ...
-		bgColor.red   = 0.0;
-		bgColor.green = 0.0;
-		bgColor.blue  = 0.0;
+		bgColor.red   = 1.0;
+		bgColor.green = 1.0;
+		bgColor.blue  = 1.0;
 		bgColor.alpha = 1.0;
 		m_OObjectsColored[m_currentCreateId].SetColor(bgColor);
 		for (int32_t iii=0; iii<m_dotList.Size(); iii++) {
@@ -187,7 +207,7 @@ void widgetDrawer::OnRegenerateDisplay(void)
 				m_OObjectsColored[m_currentCreateId].Rectangle( position.x-1, position.y-1, 3, 3);
 				m_OObjectsColored[m_currentCreateId].SetColor(bgColor);
 			} else {
-				m_OObjectsColored[m_currentCreateId].RectangleBorder( position.x-1, position.y-1, 3, 3, 1);
+				m_OObjectsColored[m_currentCreateId].Rectangle( position.x-1, position.y-1, 3, 3);
 			}
 			if (m_nearestDot == iii) {
 				color_ts tmpColor;
@@ -196,7 +216,7 @@ void widgetDrawer::OnRegenerateDisplay(void)
 				tmpColor.blue  = 1.0;
 				tmpColor.alpha = 1.0;
 				m_OObjectsColored[m_currentCreateId].SetColor(tmpColor);
-				m_OObjectsColored[m_currentCreateId].Circle( position.x, position.y, 6, 1);
+				m_OObjectsColored[m_currentCreateId].Circle( position.x, position.y, 6, 2);
 				m_OObjectsColored[m_currentCreateId].SetColor(bgColor);
 			}
 		}

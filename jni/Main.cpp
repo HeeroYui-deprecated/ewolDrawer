@@ -38,6 +38,7 @@
 #include <ewol/widget/Spacer.h>
 #include <ewol/widget/ColorBar.h>
 #include <ewol/widget/Menu.h>
+#include <ewol/widget/widgetE2D.h>
 #include <ewol/widgetMeta/FileChooser.h>
 #include <ewol/WidgetManager.h>
 #include <globalMsg.h>
@@ -177,6 +178,7 @@ class MainWindows :public ewol::Windows
 			myList->SetFillY(true);
 			mySizerVert2->SubWidgetAdd(myList);
 			
+			
 			ewol::ButtonColor * mybtColor = new ewol::ButtonColor();
 			mybtColor->SetFillX(true);
 			color_ts tmpColor;
@@ -187,6 +189,15 @@ class MainWindows :public ewol::Windows
 			mybtColor->SetCurrentColor(tmpColor);
 			mybtColor->RegisterOnEvent(this, ewolEventButtonColorChange, drawerEventColorHasChange);
 			mySizerVert2->SubWidgetAdd(mybtColor);
+			
+			
+			etk::File fileE2D("/home/edupin/progperso/ewolDrawer/Exemple.xml");
+			ewol::widgetE2D * myE2Dwidget = new ewol::widgetE2D();
+			myE2Dwidget->SetElement(fileE2D);
+			myE2Dwidget->SetMinSize(120,120);
+			myE2Dwidget->SetFillX(true);
+			mySizerVert2->SubWidgetAdd(myE2Dwidget);
+			
 			
 			mybtColor = new ewol::ButtonColor();
 			mybtColor->SetFillX(true);

@@ -36,11 +36,28 @@ typedef struct {
 } link_ts;
 
 
+extern const char * const TYPE_EOBJECT_WIDGET_DRAW_DRAWER;
+
 class widgetDrawer :public ewol::Widget
 {
 	public:
 		         widgetDrawer(void);
 		virtual ~widgetDrawer(void);
+		/**
+		 * @brief Check if the object has the specific type.
+		 * @note In Embended platforme, it is many time no -rtti flag, then it is not possible to use dynamic cast ==> this will replace it
+		 * @param[in] objectType type of the object we want to check
+		 * @return true if the object is compatible, otherwise false
+		 */
+		virtual bool CheckObjectType(const char * const objectType);
+		
+		/**
+		 * @brief Get the current Object type of the EObject
+		 * @note In Embended platforme, it is many time no -rtti flag, then it is not possible to use dynamic cast ==> this will replace it
+		 * @param[in] objectType type description
+		 * @return true if the object is compatible, otherwise false
+		 */
+		virtual const char * const GetObjectType(void);
 		virtual bool   CalculateMinSize(void);
 	private:
 		color_ts                     m_triangleColor;  //!< color for the next element of the triangle
@@ -105,6 +122,8 @@ class widgetDrawer :public ewol::Widget
 		void SetFilename(etk::UString fileName) {m_fileName = fileName; };
 		bool HasName(void) { if(m_fileName=="") { return false;} return true; };
 };
+
+#define DRAW_CAST_WIDGET_DRAWER(curentPointer) EWOL_CAST(TYPE_EOBJECT_WIDGET_DRAW_DRAWER,ewol::widgetDrawer,curentPointer)
 
 #endif
 

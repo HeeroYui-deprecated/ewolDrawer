@@ -125,13 +125,12 @@ class MaListExemple : public ewol::List
 
 
 
-const char * const drawerEventRequestOpenFile         = "Drawer Request Open File";
 const char * const drawerEventRequestOpenFileClosed   = "Drawer Close Open File";
 const char * const drawerEventRequestOpenFileSelected = "Drawer Open Selected File";
+const char * const drawerEventRequestSaveFileSelected = "Drawer Save Selected File";
 
 const char * const drawerEventColorHasChange = "Drawer-select-color-change";
-
-
+const char * const TYPE_EOBJECT_WIDGET_DRAW_WINDOWS_MAIN = "MainWindows";
 class MainWindows :public ewol::Windows
 {
 	private:
@@ -246,7 +245,7 @@ class MainWindows :public ewol::Windows
 				tmpWidget->RegisterOnEvent(this, ewolEventFileChooserValidate, drawerEventRequestOpenFileSelected);
 			} else if (eventId == drawerEventRequestOpenFileSelected) {
 				// get widget:
-				ewol::FileChooser * tmpWidget = static_cast<ewol::FileChooser*>(CallerObject);
+				ewol::FileChooser * tmpWidget = EWOL_CAST_WIDGET_FILE_CHOOSER(CallerObject);
 				if (NULL == tmpWidget) {
 					DRAW_ERROR("impossible to get pop_upWidget " << CallerObject);
 					return;
@@ -262,16 +261,36 @@ class MainWindows :public ewol::Windows
 					if (m_drawer->HasName()) {
 						m_drawer->Save();
 					} else {
-						DRAW_TODO("Later ...");
+						ewol::FileChooser* tmpWidget = new ewol::FileChooser();
+						tmpWidget->SetTitle("Save Files ...");
+						tmpWidget->SetValidateLabel("Save");
+						PopUpWidgetPush(tmpWidget);
+						tmpWidget->RegisterOnEvent(this, ewolEventFileChooserValidate, drawerEventRequestSaveFileSelected);
 					}
+				}
+			} else if (eventId == drawerEventRequestSaveFileSelected) {
+				// get widget:
+				ewol::FileChooser * tmpWidget = EWOL_CAST_WIDGET_FILE_CHOOSER(CallerObject);
+				if (NULL == tmpWidget) {
+					DRAW_ERROR("impossible to get pop_upWidget " << CallerObject);
+					return;
+				}
+				// get the filename : 
+				etk::UString tmpData = tmpWidget->GetCompleateFileName();
+				DRAW_DEBUG("Request opening the file : " << tmpData);
+				if (NULL != m_drawer) {
+					m_drawer->SetFilename(tmpData);
+					m_drawer->Save();
 				}
 			} else if (eventId == drawerEventColorHasChange) {
 				// the button color has change ==> we really change the current color ...
 				if (NULL != CallerObject) {
-					ewol::ButtonColor * tmpColorButton = static_cast<ewol::ButtonColor*>(CallerObject);
-					color_ts tmpColor = tmpColorButton->GetCurrentColor();
-					if (NULL != m_drawer) {
-						m_drawer->SetColorOnSelected(tmpColor);
+					ewol::ButtonColor * tmpColorButton = EWOL_CAST_WIDGET_BUTTON_COLOR(CallerObject);
+					if (NULL != tmpColorButton) {
+						color_ts tmpColor = tmpColorButton->GetCurrentColor();
+						if (NULL != m_drawer) {
+							m_drawer->SetColorOnSelected(tmpColor);
+						}
 					}
 				}
 			}
@@ -292,7 +311,44 @@ class MainWindows :public ewol::Windows
 				m_needFlipFlop = true;
 			}
 		}
+	public:
+		/**
+		 * @brief Check if the object has the specific type.
+		 * @note In Embended platforme, it is many time no -rtti flag, then it is not possible to use dynamic cast ==> this will replace it
+		 * @param[in] objectType type of the object we want to check
+		 * @return true if the object is compatible, otherwise false
+		 */
+		bool CheckObjectType(const char * const objectType)
+		{
+			if (NULL == objectType) {
+				EWOL_ERROR("check error : \"" << TYPE_EOBJECT_WIDGET_DRAW_WINDOWS_MAIN << "\" != NULL(pointer) ");
+				return false;
+			}
+			if (objectType == TYPE_EOBJECT_WIDGET_DRAW_WINDOWS_MAIN) {
+				return true;
+			} else {
+				if(true == ewol::Windows::CheckObjectType(objectType)) {
+					return true;
+				}
+				EWOL_ERROR("check error : \"" << TYPE_EOBJECT_WIDGET_DRAW_WINDOWS_MAIN << "\" != \"" << objectType << "\"");
+				return false;
+			}
+		}
+		
+		/**
+		 * @brief Get the current Object type of the EObject
+		 * @note In Embended platforme, it is many time no -rtti flag, then it is not possible to use dynamic cast ==> this will replace it
+		 * @param[in] objectType type description
+		 * @return true if the object is compatible, otherwise false
+		 */
+		const char * const GetObjectType(void)
+		{
+			return TYPE_EOBJECT_WIDGET_DRAW_WINDOWS_MAIN;
+		}
 };
+
+#define DRAW_CAST_WINDOWS_MAIN(curentPointer) EWOL_CAST(TYPE_EOBJECT_WIDGET_DRAW_WINDOWS_MAIN,widgetDrawer,curentPointer)
+
 
 static MainWindows * basicWindows = NULL;
 

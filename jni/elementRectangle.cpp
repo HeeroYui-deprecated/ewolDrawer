@@ -30,7 +30,7 @@ drawElement::Rectangle::~Rectangle(void)
 void drawElement::Rectangle::Draw(ewol::OObject2DColored &OObjects)
 {
 	OObjects.SetColor(1.0, 0.0, 0.0, 1.0);
-	OObjects.Rectangle(0.5, 0.5, 0.3, 0.3);
+	OObjects.Rectangle(0.2, 0.5, 0.3, 0.6);
 }
 
 

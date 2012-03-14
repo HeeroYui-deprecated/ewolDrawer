@@ -66,6 +66,7 @@ class widgetDrawer :public ewol::Widget
 		// drawing elements :
 		ewol::OObject2DTextColored   m_OObjectTextNormal[NB_BOUBLE_BUFFER];
 		ewol::OObject2DColored       m_OObjectsColored[NB_BOUBLE_BUFFER];
+		ewol::OObject2DColored       m_OObjectsColoredElement[NB_BOUBLE_BUFFER];
 		
 	public:
 		virtual void   OnRegenerateDisplay(void);

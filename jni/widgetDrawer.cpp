@@ -32,6 +32,7 @@
 #include <globalMsg.h>
 #include <ewol/WidgetManager.h>
 #include <ewol/EObject.h>
+#include <elementManager.h>
 
 
 #undef __class__
@@ -115,17 +116,21 @@ bool widgetDrawer::CalculateMinSize(void)
 
 void widgetDrawer::OnDraw(void)
 {
-	m_OObjectsColored[      m_currentDrawId].Draw();
-	m_OObjectTextNormal[    m_currentDrawId].Draw();
+	m_OObjectsColored[       m_currentDrawId].Draw();
+	m_OObjectsColoredElement[m_currentDrawId].Draw();
+	m_OObjectTextNormal[     m_currentDrawId].Draw();
 }
+
 #define BORDER_SIZE       (2)
 void widgetDrawer::OnRegenerateDisplay(void)
 {
 	if (true == NeedRedraw()) {
+	
 		// clean internal elements ...
-		m_OObjectTextNormal[    m_currentCreateId].SetFontID(m_fontNormal);
-		m_OObjectTextNormal[    m_currentCreateId].Clear();
-		m_OObjectsColored[      m_currentCreateId].Clear();
+		m_OObjectTextNormal[     m_currentCreateId].SetFontID(m_fontNormal);
+		m_OObjectTextNormal[     m_currentCreateId].Clear();
+		m_OObjectsColored[       m_currentCreateId].Clear();
+		m_OObjectsColoredElement[m_currentCreateId].Clear();
 		// we set 3 pixels in the border (blue) and draw 
 		color_ts bandColor;
 		bandColor.red   = 0.0;
@@ -174,6 +179,18 @@ void widgetDrawer::OnRegenerateDisplay(void)
 		for (int32_t iii=0; iii<nbElement; iii++) {
 			m_OObjectsColored[m_currentCreateId].Rectangle(drawPosStart.x, drawPosStart.y + iii*20, drawPosStop.x, 10);
 		}
+		coord2D_ts drawSize;
+		drawSize.x = drawPosStop.x-drawPosStart.x;
+		drawSize.y = drawPosStop.y-drawPosStart.y;
+		m_OObjectsColoredElement[m_currentCreateId].scalingSet(drawSize);
+		int32_t nbElements = drawElement::Size();
+		for(int32_t iii=0; iii<nbElements; iii++) {
+			drawElement::Base* elementLocal = drawElement::Get(iii);
+			if (NULL != elementLocal) {
+				elementLocal->Draw(m_OObjectsColoredElement[m_currentCreateId]);
+			}
+		}
+		/*
 		m_OObjectsColored[m_currentCreateId].clippingDisable();
 		for (int32_t iii=0; iii<m_linkList.Size(); iii++) {
 			for (int32_t jjj=0; jjj<3; jjj++) {
@@ -220,6 +237,7 @@ void widgetDrawer::OnRegenerateDisplay(void)
 				m_OObjectsColored[m_currentCreateId].SetColor(bgColor);
 			}
 		}
+		*/
 		m_needFlipFlop = true;
 	}
 }

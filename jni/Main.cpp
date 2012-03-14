@@ -43,6 +43,7 @@
 #include <ewol/WidgetManager.h>
 #include <globalMsg.h>
 #include <widgetDrawer.h>
+#include <elementManager.h>
 
 #include <Debug.h>
 
@@ -57,7 +58,9 @@
 class MaListExemple : public ewol::List
 {
 	public:
-		MaListExemple(void) { };
+		MaListExemple(void) {
+			RegisterMultiCast(drawMsgListElementChange);
+		};
 		~MaListExemple(void) { };
 		/*
 		virtual color_ts GetBasicBG(void) {
@@ -77,22 +80,19 @@ class MaListExemple : public ewol::List
 			return true;
 		};
 		uint32_t GetNuberOfRaw(void) {
-			return 3;
+			return drawElement::Size();
 		};
 		bool GetElement(int32_t colomn, int32_t raw, etk::UString &myTextToWrite, color_ts &fg, color_ts &bg) {
-			switch (raw) {
-				case 0:
-					myTextToWrite = "Ligne 1";
-					break;
-				case 1:
-					myTextToWrite = "ma ligne 2";
-					break;
-				case 2:
-					myTextToWrite = "test de clipping du text et plus si afinitee";
-					break;
-				default:
-					myTextToWrite = "ERROR";
-					break;
+			drawElement::Base* elementLocal = drawElement::Get(raw);
+			myTextToWrite  = "[";
+			myTextToWrite += raw;
+			myTextToWrite += "] ";
+			if (NULL == elementLocal) {
+				myTextToWrite += "????";
+			} else {
+				myTextToWrite += elementLocal->GetType();
+				myTextToWrite += "-";
+				myTextToWrite += elementLocal->GetName();
 			}
 			fg.red = 0.0;
 			fg.green = 0.0;
@@ -118,7 +118,19 @@ class MaListExemple : public ewol::List
 			}
 			return false;
 		}
-	
+		/**
+		 * @brief Receive a message from an other EObject with a specific eventId and data
+		 * @param[in] CallerObject Pointer on the EObject that information came from
+		 * @param[in] eventId Message registered by this class
+		 * @param[in] data Data registered by this class
+		 * @return ---
+		 */
+		virtual void OnReceiveMessage(ewol::EObject * CallerObject, const char * eventId, etk::UString data)
+		{
+			if (eventId == drawMsgListElementChange) {
+				MarkToReedraw();
+			}
+		}
 };
 
 
@@ -151,19 +163,19 @@ class MainWindows :public ewol::Windows
 					(void)myMenu->Add(idMenuFile, "Save", "", drawMsgGuiSave);
 					(void)myMenu->Add(idMenuFile, "Save As ...", "", drawMsgGuiSaveAs);
 					(void)myMenu->AddSpacer();
+				/*
 				int32_t idMenuEdit = myMenu->AddTitle("Edit");
 					(void)myMenu->Add(idMenuEdit, "Undo", "", drawMsgGuiUndo);
 					(void)myMenu->Add(idMenuEdit, "Redo", "", drawMsgGuiRedo);
+				*/
 				int32_t idMenuElement = myMenu->AddTitle("Element");
-					(void)myMenu->Add(idMenuElement, "Element new", "", drawMsgGuiElementNew);
-					(void)myMenu->Add(idMenuElement, "Element Remove", "", drawMsgGuiElementRemove);
-					(void)myMenu->Add(idMenuElement, "Element hide/show", "", drawMsgGuiElementHideShow);
-					(void)myMenu->AddSpacer();
-					(void)myMenu->Add(idMenuElement, "Dot Add", "", drawMsgGuiDotAdd);
-					(void)myMenu->Add(idMenuElement, "Dot Rm", "", drawMsgGuiDotRm);
-					(void)myMenu->AddSpacer();
-					(void)myMenu->Add(idMenuElement, "Link Start", "", drawMsgGuiLinkStart);
-					(void)myMenu->Add(idMenuElement, "Link Stop", "", drawMsgGuiLinkStop);
+					(void)myMenu->Add(idMenuElement, "new mesh",          "", drawMsgGuiElementNewMesh);
+					(void)myMenu->Add(idMenuElement, "new circle",        "", drawMsgGuiElementNewCircle);
+					(void)myMenu->Add(idMenuElement, "new disk",          "", drawMsgGuiElementNewDisk);
+					(void)myMenu->Add(idMenuElement, "new rectangle",     "", drawMsgGuiElementNewRectangle);
+					(void)myMenu->Add(idMenuElement, "new polygone",      "", drawMsgGuiElementNewPolygone);
+					(void)myMenu->Add(idMenuElement, "Remove",            "", drawMsgGuiElementRemove);
+					(void)myMenu->Add(idMenuElement, "hide/show",         "", drawMsgGuiElementHideShow);
 				
 			// generate the display : 
 			ewol::SizerHori * mySizer = new ewol::SizerHori();
@@ -228,6 +240,13 @@ class MainWindows :public ewol::Windows
 			
 			RegisterMultiCast(drawMsgGuiOpen);
 			RegisterMultiCast(drawMsgGuiSave);
+			RegisterMultiCast(drawMsgGuiElementNewMesh);
+			RegisterMultiCast(drawMsgGuiElementNewCircle);
+			RegisterMultiCast(drawMsgGuiElementNewDisk);
+			RegisterMultiCast(drawMsgGuiElementNewRectangle);
+			RegisterMultiCast(drawMsgGuiElementNewPolygone);
+			RegisterMultiCast(drawMsgGuiElementRemove);
+			RegisterMultiCast(drawMsgGuiElementHideShow);
 		};
 		
 		~MainWindows(void)
@@ -304,6 +323,16 @@ class MainWindows :public ewol::Windows
 						}
 					}
 				}
+			} else if (eventId == drawMsgGuiElementNewMesh) {
+				drawElement::Add(drawElement::DRAW_ELEMENT_TYPE_MESH);
+			} else if (eventId == drawMsgGuiElementNewCircle) {
+				drawElement::Add(drawElement::DRAW_ELEMENT_TYPE_CIRCLE);
+			} else if (eventId == drawMsgGuiElementNewDisk) {
+				drawElement::Add(drawElement::DRAW_ELEMENT_TYPE_DISK);
+			} else if (eventId == drawMsgGuiElementNewRectangle) {
+				drawElement::Add(drawElement::DRAW_ELEMENT_TYPE_RECTANGLE);
+			} else if (eventId == drawMsgGuiElementNewPolygone) {
+				drawElement::Add(drawElement::DRAW_ELEMENT_TYPE_POLYGONE);
 			}
 			return;
 		};

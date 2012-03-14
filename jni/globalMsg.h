@@ -30,7 +30,11 @@
 	extern const char* const drawMsgGuiUndo;       // data : ""
 	extern const char* const drawMsgGuiRedo;       // data : ""
 	
-	extern const char* const drawMsgGuiElementNew;
+	extern const char* const drawMsgGuiElementNewMesh;
+	extern const char* const drawMsgGuiElementNewCircle;
+	extern const char* const drawMsgGuiElementNewDisk;
+	extern const char* const drawMsgGuiElementNewRectangle;
+	extern const char* const drawMsgGuiElementNewPolygone;
 	extern const char* const drawMsgGuiElementRemove;
 	extern const char* const drawMsgGuiElementHideShow;
 	extern const char* const drawMsgGuiDotAdd;
@@ -38,6 +42,8 @@
 	extern const char* const drawMsgGuiLinkStart;
 	extern const char* const drawMsgGuiLinkStop;
 	extern const char* const drawMsgGuiLinkNew;
+	
+	extern const char* const drawMsgListElementChange;
 
 #endif
 

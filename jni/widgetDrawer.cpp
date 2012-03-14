@@ -628,6 +628,7 @@ void widgetDrawer::Save(void)
 	
 	TiXmlElement * element = new TiXmlElement( "element" );
 	element->SetAttribute( "name", "???" );
+	element->SetAttribute( "type", "mesh" );
 	mastertElement->LinkEndChild( element );
 	
 	for(int32_t iii=0; iii<m_dotList.Size() ; iii++) {

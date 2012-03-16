@@ -19,7 +19,7 @@
 
 
 
-drawElement::Disk::Disk(void) : Base("Disk")
+drawElement::Disk::Disk(void) : Base(DRAW_ELEMENT_TYPE_DISK)
 {
 	
 }

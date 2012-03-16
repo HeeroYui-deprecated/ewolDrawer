@@ -23,16 +23,20 @@ namespace drawElement {
 			Circle(void);
 			virtual ~Circle(void);
 		private:
-			color_ts    m_color;
+			color_ts    m_colorBorder;
+			color_ts    m_colorInside;
 			coord2D_ts  m_center;
 			int32_t     m_nbRay;
 			etkFloat_t  m_ratio;
+			bool        m_fill
 			etkFloat_t  m_thickness;
 			etkFloat_t  m_shadowOutput;
 			etkFloat_t  m_shadowInput;
+			etkFloat_t  m_angle;
+			etkFloat_t  m_angleDisplayed;
 		public:
-			void        ColorSet(color_ts color) { m_color = color; };
-			color_ts    ColorGet(void) { return m_color; };
+			void        ColorSet(color_ts color) { m_colorBorder = color; };
+			color_ts    ColorGet(void) { return m_colorBorder; };
 			void        CenterSet(coord2D_ts center) { m_center = center; };
 			coord2D_ts  CenterGet(void) { return m_center; };
 			

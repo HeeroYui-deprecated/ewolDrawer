@@ -23,7 +23,13 @@ namespace drawElement {
 			Disk(void);
 			virtual ~Disk(void);
 		private:
-			
+			color_ts    m_color;
+			coord2D_ts  m_center;
+			int32_t     m_nbRay;
+			etkFloat_t  m_ratio;
+			etkFloat_t  m_shadowOutput;
+			//etkFloat_t  m_angle;
+			//etkFloat_t  m_angleDisplayed;
 		public:
 			
 		public:

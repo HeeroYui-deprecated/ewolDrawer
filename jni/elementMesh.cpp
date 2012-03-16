@@ -17,7 +17,7 @@
 #include <elementBase.h>
 
 
-drawElement::Mesh::Mesh(void) : Base("Mesh")
+drawElement::Mesh::Mesh(void) : Base(DRAW_ELEMENT_TYPE_MESH)
 {
 	
 }

@@ -19,13 +19,6 @@
 #include <elementBase.h>
 
 namespace drawElement {
-	typedef enum {
-		DRAW_ELEMENT_TYPE_CIRCLE,
-		DRAW_ELEMENT_TYPE_DISK,
-		DRAW_ELEMENT_TYPE_MESH,
-		DRAW_ELEMENT_TYPE_POLYGONE,
-		DRAW_ELEMENT_TYPE_RECTANGLE,
-	}elementType_te;
 	
 	void                RemoveAll(void);
 	int32_t             Size(void);
@@ -34,7 +27,13 @@ namespace drawElement {
 	void                Add(elementType_te type);
 	void                Up(int32_t id);
 	void                Down(int32_t id);
+	void                SelectSet(int32_t id);
+	int32_t             SelectGet(void);
 	
+	void Load(etk::UString fileName);
+	void Save(void);
+	void SetFilename(etk::UString fileName);
+	bool HasName(void);
 };
 
 #endif

@@ -17,7 +17,7 @@
 #include <elementBase.h>
 
 
-drawElement::Polygone::Polygone(void) : Base("Polygone")
+drawElement::Polygone::Polygone(void) : Base(DRAW_ELEMENT_TYPE_POLYGONE)
 {
 	
 }

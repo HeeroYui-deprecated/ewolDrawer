@@ -21,22 +21,30 @@
 #include <ewol/OObject/2DColored.h>
 
 namespace drawElement {
+	typedef enum {
+		DRAW_ELEMENT_TYPE_CIRCLE,
+		DRAW_ELEMENT_TYPE_DISK,
+		DRAW_ELEMENT_TYPE_MESH,
+		DRAW_ELEMENT_TYPE_POLYGONE,
+		DRAW_ELEMENT_TYPE_RECTANGLE,
+	}elementType_te;
 	class Base
 	{
 		public:
-			Base(const char* type);
+			Base(elementType_te type);
 			virtual ~Base(void);
 		private:
-			etk::UString m_name;
-			const char*  m_type;
-			bool         m_visible;
+			etk::UString    m_name;
+			elementType_te  m_type;
+			bool            m_visible;
 		public:
-			void         SetName(etk::UString name) { m_name = name; };
-			etk::UString GetName(void) { return m_name; };
-			const char*  GetType(void) { return m_type; };
-			void         Show(void) { m_visible = true; };
-			void         Hide(void) { m_visible = false; };
-			bool         GetVisible(void) { return m_visible; };
+			void            SetName(etk::UString name) { m_name = name; };
+			etk::UString    GetName(void) { return m_name; };
+			elementType_te  GetType(void) { return m_type; };
+			const char*     GetTypeChar(void);
+			void            Show(void) { m_visible = true; };
+			void            Hide(void) { m_visible = false; };
+			bool            GetVisible(void) { return m_visible; };
 		public:
 			virtual void Draw(ewol::OObject2DColored &OObjects)=0;
 	};

@@ -17,7 +17,7 @@
 #include <elementBase.h>
 
 
-drawElement::Rectangle::Rectangle(void) : Base("Rectangle")
+drawElement::Rectangle::Rectangle(void) : Base(DRAW_ELEMENT_TYPE_RECTANGLE)
 {
 	
 }

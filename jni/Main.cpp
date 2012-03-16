@@ -57,21 +57,14 @@
 
 class MaListExemple : public ewol::List
 {
+	private:
+		
 	public:
 		MaListExemple(void) {
 			RegisterMultiCast(drawMsgListElementChange);
 		};
 		~MaListExemple(void) { };
-		/*
-		virtual color_ts GetBasicBG(void) {
-			color_ts bg;
-			bg.red = 1.0;
-			bg.green = 0.0;
-			bg.blue = 0.0;
-			bg.alpha = 1.0;
-			return bg;
-		}
-		*/
+		
 		uint32_t GetNuberOfColomn(void) {
 			return 1;
 		};
@@ -83,6 +76,7 @@ class MaListExemple : public ewol::List
 			return drawElement::Size();
 		};
 		bool GetElement(int32_t colomn, int32_t raw, etk::UString &myTextToWrite, color_ts &fg, color_ts &bg) {
+			int32_t idSelected = drawElement::SelectGet();
 			drawElement::Base* elementLocal = drawElement::Get(raw);
 			myTextToWrite  = "[";
 			myTextToWrite += raw;
@@ -90,7 +84,7 @@ class MaListExemple : public ewol::List
 			if (NULL == elementLocal) {
 				myTextToWrite += "????";
 			} else {
-				myTextToWrite += elementLocal->GetType();
+				myTextToWrite += elementLocal->GetTypeChar();
 				myTextToWrite += "-";
 				myTextToWrite += elementLocal->GetName();
 			}
@@ -98,7 +92,12 @@ class MaListExemple : public ewol::List
 			fg.green = 0.0;
 			fg.blue = 0.0;
 			fg.alpha = 1.0;
-			if (raw % 2) {
+			if (raw == idSelected) {
+				bg.red = 0.5;
+				bg.green = 0.5;
+				bg.blue = 1.0;
+				bg.alpha = 1.0;
+			} else if (raw % 2) {
 				bg.red = 1.0;
 				bg.green = 1.0;
 				bg.blue = 1.0;
@@ -113,8 +112,9 @@ class MaListExemple : public ewol::List
 		};
 		
 		bool OnItemEvent(int32_t IdInput, ewol::eventInputType_te typeEvent, int32_t colomn, int32_t raw, etkFloat_t x, etkFloat_t y) {
-			if (typeEvent == ewol::EVENT_INPUT_TYPE_SINGLE) {
+			if (IdInput==1 && typeEvent == ewol::EVENT_INPUT_TYPE_SINGLE) {
 				DRAW_INFO("Event on List : IdInput=" << IdInput << " colomn=" << colomn << " raw=" << raw );
+				drawElement::SelectSet(raw);
 			}
 			return false;
 		}

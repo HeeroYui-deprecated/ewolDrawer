@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := ewolDrawer
-LOCAL_STATIC_LIBRARIES := ewol etk tinyxml libzip libpng libfreetype
+LOCAL_STATIC_LIBRARIES := ewol etk tinyxml libzip libpng libfreetype parsersvg agg
 
 
 # load the common sources file of the platform

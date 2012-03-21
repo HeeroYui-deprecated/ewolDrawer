@@ -28,7 +28,7 @@ namespace drawElement {
 			coord2D_ts  m_center;
 			int32_t     m_nbRay;
 			etkFloat_t  m_ratio;
-			bool        m_fill
+			bool        m_fill;
 			etkFloat_t  m_thickness;
 			etkFloat_t  m_shadowOutput;
 			etkFloat_t  m_shadowInput;

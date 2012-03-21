@@ -170,6 +170,7 @@ bool drawElement::HasName(void)
 
 void drawElement::Load(etk::UString fileName)
 {
+/*
 	drawElement::RemoveAll();
 	SetFilename(newFileName);
 	
@@ -218,7 +219,7 @@ void drawElement::Load(etk::UString fileName)
 			if (pNode->Type()==TiXmlNode::TINYXML_COMMENT) {
 				// nothing to do, just proceed to next step
 			} else if (!strcmp(pNode->Value(), "element")) {
-			/*
+			#if 0
 				for(TiXmlNode * pGuiNode = pNode->FirstChild();
 				    NULL != pGuiNode;
 				    pGuiNode = pGuiNode->NextSibling()) {
@@ -280,7 +281,7 @@ void drawElement::Load(etk::UString fileName)
 						DRAW_ERROR("(l "<<pGuiNode->Row()<<") node not suported : \""<<pGuiNode->Value()<<"\" must be [dot,link]");
 					}
 				}
-			*/
+			#endif
 			} else {
 				DRAW_ERROR("(l "<<pNode->Row()<<") node not suported : \""<<pNode->Value()<<"\" must be [element]");
 			}
@@ -289,10 +290,12 @@ void drawElement::Load(etk::UString fileName)
 	if (NULL != fileBuffer) {
 		delete[] fileBuffer;
 	}
+	*/
 }
 
 void drawElement::Save(void)
 {
+/*
 	if (l_fileName == "") {
 		DRAW_ERROR("No filename set ...");
 		return;
@@ -347,5 +350,6 @@ void drawElement::Save(void)
 	}
 	//Save Document
 	doc.SaveFile( l_fileName.Utf8Data() );
+*/
 }
 

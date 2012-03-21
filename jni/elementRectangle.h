@@ -27,7 +27,7 @@ namespace drawElement {
 			color_ts    m_colorInside;
 			coord2D_ts  m_center;
 			coord2D_ts  m_size;
-			bool        m_fill
+			bool        m_fill;
 			etkFloat_t  m_thickness;
 			etkFloat_t  m_shadowOutput;
 			etkFloat_t  m_shadowInput;

@@ -41,6 +41,7 @@
 #include <ewol/widget/widgetE2D.h>
 #include <ewol/widgetMeta/FileChooser.h>
 #include <ewol/WidgetManager.h>
+#include <parserSVG/parserSVG.h>
 #include <globalMsg.h>
 #include <widgetDrawer.h>
 #include <elementManager.h>
@@ -284,10 +285,11 @@ class MainWindows :public ewol::Windows
 				etk::UString tmpData = tmpWidget->GetCompleateFileName();
 				DRAW_DEBUG("Request opening the file : " << tmpData);
 				if (NULL != m_drawer) {
-					m_drawer->Load(tmpData);
+					//m_drawer->Load(tmpData);
 				}
 			} else if (eventId == drawMsgGuiSave) {
 				if (NULL != m_drawer) {
+					/*
 					if (m_drawer->HasName()) {
 						m_drawer->Save();
 					} else {
@@ -297,6 +299,7 @@ class MainWindows :public ewol::Windows
 						PopUpWidgetPush(tmpWidget);
 						tmpWidget->RegisterOnEvent(this, ewolEventFileChooserValidate, drawerEventRequestSaveFileSelected);
 					}
+					*/
 				}
 			} else if (eventId == drawerEventRequestSaveFileSelected) {
 				// get widget:
@@ -309,8 +312,10 @@ class MainWindows :public ewol::Windows
 				etk::UString tmpData = tmpWidget->GetCompleateFileName();
 				DRAW_DEBUG("Request opening the file : " << tmpData);
 				if (NULL != m_drawer) {
+					/*
 					m_drawer->SetFilename(tmpData);
 					m_drawer->Save();
+					*/
 				}
 			} else if (eventId == drawerEventColorHasChange) {
 				// the button color has change ==> we really change the current color ...
@@ -442,6 +447,14 @@ void APP_Init(void)
 	// create the specific windows
 	ewol::DisplayWindows(basicWindows);
 	DRAW_INFO("==> Init Ewol Drawer (END)");
+	etk::File svgFile("lion.svg", etk::FILE_TYPE_DATA);
+	svg::Parser *mySVGElement = new svg::Parser(svgFile);
+	
+	mySVGElement->DisplayDebug();
+	mySVGElement->GenerateTestFile();
+	
+	exit(-1);
+	
 }
 
 /**

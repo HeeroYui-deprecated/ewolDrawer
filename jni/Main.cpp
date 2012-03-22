@@ -449,10 +449,39 @@ void APP_Init(void)
 	DRAW_INFO("==> Init Ewol Drawer (END)");
 	etk::File svgFile("lion.svg", etk::FILE_TYPE_DATA);
 	svg::Parser *mySVGElement = new svg::Parser(svgFile);
-	
+	//mySVGElement->DisplayDebug();
+	mySVGElement->GenerateTestFile();
+	etk::UString tmpString;
+	/*
+	tmpString = "H2g2.svg";
+	svgFile.SetCompleateName(tmpString, etk::FILE_TYPE_DATA);
+	mySVGElement = new svg::Parser(svgFile);
+	mySVGElement->GenerateTestFile();
+	*/
+	tmpString = "01_rectangle.svg";
+	svgFile.SetCompleateName(tmpString, etk::FILE_TYPE_DATA);
+	mySVGElement = new svg::Parser(svgFile);
 	mySVGElement->DisplayDebug();
 	mySVGElement->GenerateTestFile();
-	
+
+	tmpString = "02_rectangle.svg";
+	svgFile.SetCompleateName(tmpString, etk::FILE_TYPE_DATA);
+	mySVGElement = new svg::Parser(svgFile);
+	mySVGElement->DisplayDebug();
+	mySVGElement->GenerateTestFile();
+
+	tmpString = "03_rectangle.svg";
+	svgFile.SetCompleateName(tmpString, etk::FILE_TYPE_DATA);
+	mySVGElement = new svg::Parser(svgFile);
+	mySVGElement->DisplayDebug();
+	mySVGElement->GenerateTestFile();
+
+	tmpString = "04_rectangle.svg";
+	svgFile.SetCompleateName(tmpString, etk::FILE_TYPE_DATA);
+	mySVGElement = new svg::Parser(svgFile);
+	mySVGElement->DisplayDebug();
+	mySVGElement->GenerateTestFile();
+
 	exit(-1);
 	
 }

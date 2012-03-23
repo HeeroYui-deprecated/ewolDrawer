@@ -458,6 +458,7 @@ void APP_Init(void)
 	mySVGElement = new svg::Parser(svgFile);
 	mySVGElement->GenerateTestFile();
 	*/
+
 	tmpString = "01_rectangle.svg";
 	svgFile.SetCompleateName(tmpString, etk::FILE_TYPE_DATA);
 	mySVGElement = new svg::Parser(svgFile);
@@ -483,7 +484,6 @@ void APP_Init(void)
 	mySVGElement->GenerateTestFile();
 
 	exit(-1);
-	
 }
 
 /**

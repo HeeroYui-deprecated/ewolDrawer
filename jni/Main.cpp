@@ -397,6 +397,36 @@ class MainWindows :public ewol::Windows
 
 static MainWindows * basicWindows = NULL;
 
+const char * listTestSVG[] = {
+	"lion.svg",
+	"01_rectangle.svg",
+	"02_rectangle.svg",
+	"03_rectangle.svg",
+	"04_rectangle.svg",
+	"05_circle.svg",
+	"06_ellipse.svg",
+	"07_ellipse.svg",
+	"08_ellipse.svg",
+	"09_line.svg",
+	"10_polygon.svg",
+	"11_polygon.svg",
+	"12_polygon.svg",
+	"13_polygon.svg",
+	"14_polyline.svg",
+	"15_polyline.svg",
+	"16_path.svg",
+	"17_path.svg",
+/*
+	// not supported in basic realease ...
+	"18_text.svg",
+	"19_text.svg",
+	"20_text.svg",
+	"21_text.svg",
+	"22_text.svg",
+*/
+	NULL
+};
+
 /**
  * @brief main application function Initialisation
  */
@@ -447,42 +477,22 @@ void APP_Init(void)
 	// create the specific windows
 	ewol::DisplayWindows(basicWindows);
 	DRAW_INFO("==> Init Ewol Drawer (END)");
-	etk::File svgFile("lion.svg", etk::FILE_TYPE_DATA);
-	svg::Parser *mySVGElement = new svg::Parser(svgFile);
-	//mySVGElement->DisplayDebug();
-	mySVGElement->GenerateTestFile();
+	
+	
+	etk::File svgFile;
+	svg::Parser *mySVGElement = NULL;
 	etk::UString tmpString;
-	/*
-	tmpString = "H2g2.svg";
-	svgFile.SetCompleateName(tmpString, etk::FILE_TYPE_DATA);
-	mySVGElement = new svg::Parser(svgFile);
-	mySVGElement->GenerateTestFile();
-	*/
-
-	tmpString = "01_rectangle.svg";
-	svgFile.SetCompleateName(tmpString, etk::FILE_TYPE_DATA);
-	mySVGElement = new svg::Parser(svgFile);
-	mySVGElement->DisplayDebug();
-	mySVGElement->GenerateTestFile();
-
-	tmpString = "02_rectangle.svg";
-	svgFile.SetCompleateName(tmpString, etk::FILE_TYPE_DATA);
-	mySVGElement = new svg::Parser(svgFile);
-	mySVGElement->DisplayDebug();
-	mySVGElement->GenerateTestFile();
-
-	tmpString = "03_rectangle.svg";
-	svgFile.SetCompleateName(tmpString, etk::FILE_TYPE_DATA);
-	mySVGElement = new svg::Parser(svgFile);
-	mySVGElement->DisplayDebug();
-	mySVGElement->GenerateTestFile();
-
-	tmpString = "04_rectangle.svg";
-	svgFile.SetCompleateName(tmpString, etk::FILE_TYPE_DATA);
-	mySVGElement = new svg::Parser(svgFile);
-	mySVGElement->DisplayDebug();
-	mySVGElement->GenerateTestFile();
-
+	
+	for(int32_t iii=0; listTestSVG[iii]!=NULL; iii++) {
+		tmpString = listTestSVG[iii];
+		svgFile.SetCompleateName(tmpString, etk::FILE_TYPE_DATA);
+		mySVGElement = new svg::Parser(svgFile);
+		if (NULL != mySVGElement) {
+			mySVGElement->DisplayDebug();
+			mySVGElement->GenerateTestFile();
+			delete(mySVGElement);
+		}
+	}
 	exit(-1);
 }
 

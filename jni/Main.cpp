@@ -399,6 +399,7 @@ static MainWindows * basicWindows = NULL;
 
 const char * listTestSVG[] = {
 	"lion.svg",
+	"tiger.svg",
 	"01_rectangle.svg",
 	"02_rectangle.svg",
 	"03_rectangle.svg",
@@ -488,7 +489,7 @@ void APP_Init(void)
 		svgFile.SetCompleateName(tmpString, etk::FILE_TYPE_DATA);
 		mySVGElement = new svg::Parser(svgFile);
 		if (NULL != mySVGElement) {
-			mySVGElement->DisplayDebug();
+			//mySVGElement->DisplayDebug();
 			mySVGElement->GenerateTestFile();
 			delete(mySVGElement);
 		}

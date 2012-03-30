@@ -38,7 +38,7 @@
 #include <ewol/widget/Spacer.h>
 #include <ewol/widget/ColorBar.h>
 #include <ewol/widget/Menu.h>
-#include <ewol/widget/widgetE2D.h>
+#include <ewol/widget/Joystick.h>
 #include <ewol/widgetMeta/FileChooser.h>
 #include <ewol/WidgetManager.h>
 #include <parserSVG/parserSVG.h>
@@ -203,14 +203,20 @@ class MainWindows :public ewol::Windows
 			mybtColor->RegisterOnEvent(this, ewolEventButtonColorChange, drawerEventColorHasChange);
 			mySizerVert2->SubWidgetAdd(mybtColor);
 			
+			ewol::Joystick * myJoy = new ewol::Joystick();
+			myJoy->SetMinSize(120,120);
+			mySizerVert2->SubWidgetAdd(myJoy);
 			
-			etk::File fileE2D("/home/edupin/progperso/ewolDrawer/Exemple.xml");
-			ewol::widgetE2D * myE2Dwidget = new ewol::widgetE2D();
-			myE2Dwidget->SetElement(fileE2D);
-			myE2Dwidget->SetMinSize(120,120);
-			myE2Dwidget->SetFillX(true);
-			mySizerVert2->SubWidgetAdd(myE2Dwidget);
+			myJoy = new ewol::Joystick();
+			myJoy->SetMinSize(120,120);
+			myJoy->SetLockMode(true);
+			mySizerVert2->SubWidgetAdd(myJoy);
 			
+			myJoy = new ewol::Joystick();
+			myJoy->SetMinSize(120,120);
+			myJoy->SetLockMode(true);
+			myJoy->SetDisplayMode(ewol::JOYSTICK_ARROW_MODE);
+			mySizerVert2->SubWidgetAdd(myJoy);
 			
 			mybtColor = new ewol::ButtonColor();
 			mybtColor->SetFillX(true);
@@ -440,6 +446,7 @@ void APP_Init(void)
 		//fontID = GetFontIdWithFileName("dataTest/TextMonospace.ebt");
 	}
 	*/
+	basicWindows = new MainWindows();
 	
 	// set the default Path of the application : 
 	#ifdef PLATFORM_Linux
@@ -470,15 +477,13 @@ void APP_Init(void)
 		ewol::SetDefaultFont("freefont/FreeSerif.ttf", 12);
 	#endif
 	
-	basicWindows = new MainWindows();
-	
-	
 	ewol::shortCut::Add("ctrl+t",       drawMsgGuiLinkNew,   "");
+	
 	
 	// create the specific windows
 	ewol::DisplayWindows(basicWindows);
 	DRAW_INFO("==> Init Ewol Drawer (END)");
-	
+	/*
 	
 	etk::File svgFile;
 	svg::Parser *mySVGElement = NULL;
@@ -495,6 +500,13 @@ void APP_Init(void)
 		}
 	}
 	exit(-1);
+	*/
+}
+
+etk::File APP_Icon(void)
+{
+	etk::File bitmapFile("", etk::FILE_TYPE_DATA);
+	return bitmapFile;
 }
 
 /**

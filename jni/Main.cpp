@@ -210,6 +210,8 @@ class MainWindows :public ewol::Windows
 			myJoy = new ewol::Joystick();
 			myJoy->SetMinSize(120,120);
 			myJoy->SetLockMode(true);
+			myJoy->Foreground("FavoriteEnable.svg");
+			myJoy->Background("WhereAmI.svg");
 			mySizerVert2->SubWidgetAdd(myJoy);
 			
 			myJoy = new ewol::Joystick();

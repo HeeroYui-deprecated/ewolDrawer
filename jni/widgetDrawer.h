@@ -28,17 +28,14 @@
 #include <widgetDrawer.h>
 #include <globalMsg.h>
 #include <ewol/Widget.h>
+#include <ewol/widget/Scene.h>
 
 #include <etk/Types.h>
-typedef struct {
-	int32_t  dot[3];
-	color_ts color[3];
-} link_ts;
 
 
 extern const char * const TYPE_EOBJECT_WIDGET_DRAW_DRAWER;
 
-class widgetDrawer :public ewol::Widget
+class widgetDrawer :public ewol::Scene
 {
 	public:
 		         widgetDrawer(void);
@@ -58,18 +55,7 @@ class widgetDrawer :public ewol::Widget
 		 * @return true if the object is compatible, otherwise false
 		 */
 		virtual const char * const GetObjectType(void);
-		virtual bool   CalculateMinSize(void);
-	private:
-		color_ts                     m_triangleColor;  //!< color for the next element of the triangle
-		color_ts                     m_textColorFg;    //!< Text color
-		color_ts                     m_textColorBg;    //!< Background color
-		// drawing elements :
-		ewol::OObject2DTextColored   m_OObjectTextNormal[NB_BOUBLE_BUFFER];
-		ewol::OObject2DColored       m_OObjectsColored[NB_BOUBLE_BUFFER];
-		ewol::OObject2DColored       m_OObjectsColoredElement[NB_BOUBLE_BUFFER];
-		
 	public:
-		virtual void   OnRegenerateDisplay(void);
 		/**
 		 * @brief Receive a message from an other EObject with a specific eventId and data
 		 * @param[in] CallerObject Pointer on the EObject that information came from
@@ -97,27 +83,6 @@ class widgetDrawer :public ewol::Widget
 		 */
 		virtual bool OnEventKb(ewol::eventKbType_te typeEvent, uniChar_t unicodeData);
 		virtual bool OnEventKbMove(ewol::eventKbType_te typeEvent, ewol::eventKbMoveType_te moveTypeEvent);
-	private:
-		int32_t m_fontSize;
-		int32_t m_fontNormal;
-	public:
-		void SetFontSize(int32_t size);
-		void SetFontNameNormal(etk::UString fontName);
-		void SetColorOnSelected(color_ts newColor);
-	protected:
-		virtual void OnDraw(void);
-	private:
-		etk::VectorType<coord2D_ts>   m_dotList;       //!< list of all point in the buffer
-		etk::VectorType<link_ts>      m_linkList;      //!< List of all triangle in the mesh
-		etk::VectorType<int32_t>      m_selectedList;  //!< current selected points
-		int32_t                       m_nearestDot;    //!< nearest dot from the current cursor
-		bool                          m_movingPoint;
-		
-		void removeDotId(int32_t id);
-		int32_t GetNearestPoint(coord2D_ts pos);
-		etkFloat_t QuadDistance(coord2D_ts aaa, coord2D_ts bbb);
-		bool DotIsSelected(int32_t dotId);
-	public:
 };
 
 #define DRAW_CAST_WIDGET_DRAWER(curentPointer) EWOL_CAST(TYPE_EOBJECT_WIDGET_DRAW_DRAWER,ewol::widgetDrawer,curentPointer)

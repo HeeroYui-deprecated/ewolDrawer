@@ -239,8 +239,6 @@ class MainWindows :public ewol::Windows
 			mySizerVert2->SubWidgetAdd(mybtColor);
 			
 			m_drawer = new widgetDrawer();
-			m_drawer->SetFontSize(11);
-			m_drawer->SetFontNameNormal("freefont/FreeSerif.ttf");
 			m_drawer->SetExpendX(true);
 			m_drawer->SetExpendY(true);
 			m_drawer->SetFillX(true);
@@ -332,7 +330,7 @@ class MainWindows :public ewol::Windows
 					if (NULL != tmpColorButton) {
 						color_ts tmpColor = tmpColorButton->GetCurrentColor();
 						if (NULL != m_drawer) {
-							m_drawer->SetColorOnSelected(tmpColor);
+							//m_drawer->SetColorOnSelected(tmpColor);
 						}
 					}
 				}
